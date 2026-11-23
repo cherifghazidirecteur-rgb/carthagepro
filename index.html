@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f78d1">
+<link rel="manifest" href="manifest.webmanifest">
+<title>CarthagePro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Identité : chaux blanche et bleu de Sidi Bou Saïd, rouge chéchia, ocre de Nabeul, bandeau tapis de Kairouan, arche de porte tunisienne */
+:root{
+  color-scheme:light;
+  --bleu:#0e8a8c; --bleu-fonce:#0a6e70; --on-bleu:#ffffff; --rouge:#d8453a; --ocre:#f4a935; --ocre-txt:#7a4a00; --ocre-fond:#fdebc8; --olive:#e0674f; --olive-fond:#fbe3dd; --turq-txt:#8a2f1f;
+  --sable:#f2faf9; --chaux:#ffffff; --encre:#0f3b3d; --muted:#55797a; --line:#cfe7e5; --soft:#def2f0;
+  --font:'Cairo','Segoe UI',system-ui,sans-serif;
+  --carpet:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Crect width='24' height='12' fill='%23ffffff'/%3E%3Cpath d='M12 1l5 5-5 5-5-5z' fill='%230e8a8c'/%3E%3Cpath d='M12 4l2 2-2 2-2-2z' fill='%23f4a935'/%3E%3Cpath d='M0 6l2-2 2 2-2 2zM20 6l2-2 2 2-2 2z' fill='%23e0674f'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--sable);color:var(--encre);font-family:var(--font);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;text-align:inherit}
+:focus-visible{outline:3px solid var(--ocre);outline-offset:2px}
+#app{height:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;background:var(--sable);position:relative;overflow:hidden;border-inline:1px solid var(--line)}
+.band{height:12px;flex:none;background:var(--carpet) repeat-x;background-size:auto 12px}
+.top{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--chaux);border-bottom:1px solid var(--line);flex:none}
+.logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:20px;letter-spacing:-.3px;color:var(--bleu);flex:1}
+.logo b{color:var(--rouge);font-weight:800}
+.logo svg{width:26px;height:26px;color:var(--rouge)}
+.langs{display:flex;background:var(--sable);border:1px solid var(--line);border-radius:99px;padding:2px}
+.langs button{padding:3px 10px;font-size:13px;font-weight:600;color:var(--muted);border-radius:99px}
+.langs button[aria-pressed="true"]{background:var(--bleu);color:var(--on-bleu)}
+.arch{border-radius:999px 999px 8px 8px;background:var(--soft);color:var(--bleu-fonce);font-weight:800;display:grid;place-items:center;flex:none;width:44px;height:52px;font-size:16px}
+.arch.sm{width:34px;height:40px;font-size:13px}
+.arch.lg{width:84px;height:100px;font-size:30px;border:4px solid var(--chaux)}
+.arch.rouge{background:#fde3e0;color:#8e1f18}
+.arch.ocre{background:var(--ocre-fond);color:var(--ocre-txt)}
+.arch.olive{background:var(--olive-fond);color:var(--turq-txt)}
+main{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px}
+nav{display:grid;grid-template-columns:1fr 1fr 70px 1fr 1fr;align-items:end;background:var(--chaux);border-top:1px solid var(--line);padding:0 4px env(safe-area-inset-bottom);flex:none}
+nav button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 2px 7px;font-size:12px;font-weight:600;color:var(--muted);position:relative;text-align:center}
+nav button[aria-current="page"]{color:var(--bleu)}
+nav button[aria-current="page"]::before{content:"";position:absolute;top:0;width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--rouge)}
+nav svg{width:24px;height:24px}
+nav .plus{margin-top:-18px;padding:0 0 8px}
+nav .plus span.fab{width:54px;height:60px;border-radius:999px 999px 10px 10px;background:var(--bleu);color:#fff;display:grid;place-items:center;box-shadow:0 4px 10px rgba(14,138,140,.3);border:3px solid var(--chaux)}
+nav .plus svg{width:26px;height:26px}
+.badge-n{position:absolute;top:4px;inset-inline-start:calc(50% + 8px);min-width:18px;height:18px;border-radius:9px;background:var(--rouge);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.card{background:var(--chaux);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card.flat{padding:0;gap:0;overflow:hidden}
+.card .main{display:flex;flex-direction:column;gap:8px;padding:14px;width:100%}
+.card .acts{display:flex;align-items:center;gap:8px;padding:0 14px 12px}
+.row{display:flex;align-items:center;gap:12px}
+.row.sp{justify-content:space-between}
+.grow{flex:1;min-width:0}
+h1{font-size:24px;line-height:1.2;font-weight:800}
+h2{font-size:18px;font-weight:800;color:var(--bleu)}
+h3{font-size:16px;font-weight:700;line-height:1.3}
+.muted{color:var(--muted);font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:99px;background:var(--soft);color:var(--bleu);font-size:12.5px;font-weight:600}
+.chip.aide{background:var(--olive-fond);color:var(--olive)}
+.chip.free{background:var(--ocre-fond);color:var(--ocre-txt)}
+.chip.new{background:var(--rouge);color:#fff}
+.chip.line{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.salary{font-weight:800;color:var(--ocre-txt)}
+.btn{padding:10px 16px;border-radius:12px;background:var(--bleu);color:var(--on-bleu);font-weight:700;text-align:center;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.rouge{background:var(--rouge);color:#fff}
+.btn.ghost{background:transparent;border:2px solid var(--bleu);color:var(--bleu)}
+.btn.small{padding:6px 14px;min-height:38px;font-size:14px}
+.btn.block{display:flex;width:100%}
+.btn[disabled]{opacity:.65;cursor:default}
+.ib{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--muted);flex:none}
+.ib[aria-pressed="true"]{color:var(--rouge)}
+.ib svg{width:22px;height:22px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:13.5px;color:var(--muted);font-weight:600}
+input,select,textarea{width:100%;padding:11px 12px;min-height:46px;border:1.5px solid var(--line);border-radius:12px;background:var(--chaux)}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--bleu);outline:none}
+.search{position:sticky;top:-14px;z-index:2;background:var(--sable);padding:14px 0 2px;margin-top:-14px;display:flex;flex-direction:column;gap:8px}
+.search .box{position:relative}
+.search .box svg{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted)}
+.search input{padding-inline-start:40px;border-radius:99px}
+.pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pills select{width:auto;min-height:38px;padding:6px 12px;border-radius:99px;font-size:14px;font-weight:600;flex:none;max-width:200px}
+.pills select.on{border-color:var(--bleu);background:var(--soft);color:var(--bleu)}
+.hscroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin-inline:-14px;padding-inline:14px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll .mini{scroll-snap-align:start;flex:none;width:230px;text-align:start;background:var(--chaux);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.sec{display:flex;align-items:center;justify-content:space-between}
+.sec h2{font-size:17px}
+.sec button{color:var(--rouge);font-weight:700;font-size:14px}
+.hero{background:linear-gradient(0deg,#fff 0,#fff 100%);border:1px solid var(--line);position:relative;overflow:hidden;border-top:5px solid var(--bleu)}
+.hero::after{content:"";position:absolute;inset-inline:0;bottom:0;height:10px;background:var(--carpet) repeat-x;background-size:auto 10px}
+.hero .main{padding-bottom:22px}
+.meter{height:9px;background:var(--soft);border-radius:5px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ocre);border-radius:5px}
+.card .meter{background:var(--line)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{border:1.5px solid var(--line);background:var(--chaux);border-radius:12px;padding:10px 12px;min-height:46px;font-weight:600}
+.seg button[aria-pressed="true"]{border-color:var(--bleu);background:var(--soft);color:var(--bleu)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--chaux);border:1px solid var(--line);border-radius:99px;padding:3px}
+.tabs button{padding:8px;border-radius:99px;font-weight:700;color:var(--muted);text-align:center}
+.tabs button[aria-pressed="true"]{background:var(--bleu);color:var(--on-bleu)}
+.msg{max-width:80%;padding:9px 13px;border-radius:16px 16px 16px 4px;background:var(--soft);align-self:flex-start;white-space:pre-wrap;word-break:break-word}
+.msg.me{background:var(--bleu);color:var(--on-bleu);align-self:flex-end;border-radius:16px 16px 4px 16px}
+.chat{display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1;padding:4px 0}
+.scrim{position:absolute;inset:0;background:rgba(15,25,50,.55);display:flex;align-items:flex-end;z-index:5}
+.sheet{background:var(--sable);width:100%;max-height:92%;border-radius:22px 22px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.sheet .grab{height:5px;width:44px;border-radius:3px;background:var(--line);margin:8px auto 0}
+.sheet .hd{display:flex;align-items:center;gap:8px;padding:8px 14px 10px;border-bottom:1px solid var(--line)}
+.sheet .bd{padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+.welcome{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.welcome .in{padding:20px 18px 28px;display:flex;flex-direction:column;gap:14px;max-width:460px;width:100%;margin:0 auto}
+.brandbig{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding-top:6px}
+.brandbig .arch{width:74px;height:88px}
+.brandbig .arch svg{width:42px;height:42px}
+.brandbig h1{font-size:32px;color:var(--bleu)}
+.brandbig h1 b{color:var(--rouge)}
+.note{font-size:13.5px;color:var(--ocre-txt);background:var(--ocre-fond);padding:10px 12px;border-radius:12px}
+.empty{text-align:center;padding:26px 16px;color:var(--muted);display:flex;flex-direction:column;gap:10px;align-items:center}
+.vf{display:inline-flex;vertical-align:middle;color:var(--ocre)}
+.vf svg{width:17px;height:17px}
+.toast{position:absolute;inset-inline:16px;bottom:84px;background:var(--bleu-fonce);color:#fff;padding:11px 14px;border-radius:12px;z-index:9;text-align:center;font-weight:600}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.3}}.btn:active,.card .main:active{transform:scale(.99)}}
+.ico{width:18px;height:18px;flex:none;vertical-align:-3px}
+.ib[aria-pressed="true"] svg{fill:currentColor}
+.chip.ok{background:var(--olive-fond);color:var(--olive)}
+.row.top{align-items:flex-start}
+.cardlink{display:flex;flex-direction:column;gap:8px;width:100%}
+.logo svg.star{width:26px;height:26px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid2 .field:last-child:nth-child(odd){grid-column:1/-1}
+main>*{flex:none}
+
+.match{display:flex;align-items:center;gap:12px;border-radius:14px;padding:10px 12px;border:1px solid var(--line);background:var(--chaux)}
+.ring{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:800;font-size:15px;color:var(--encre);background:conic-gradient(var(--c) calc(var(--p)*1%),var(--soft) 0)}
+.ring span{width:42px;height:42px;border-radius:50%;background:var(--chaux);display:grid;place-items:center}
+.m-hi{--c:#1aa37a}.m-ok{--c:#0e8a8c}.m-mid{--c:#f0a91f}.m-lo{--c:#d8453a}
+.mini-ring{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+ul.chk{list-style:none;padding:0;display:flex;flex-direction:column;gap:4px}
+ul.chk li{padding-inline-start:22px;position:relative;font-size:14px}
+ul.chk li::before{content:"";position:absolute;inset-inline-start:0;top:7px;width:10px;height:10px;border-radius:50%;background:var(--c,#1aa37a)}
+ul.chk.gap li::before{background:#f0a91f}
+.doc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;font-size:14px;line-height:1.6;white-space:pre-wrap;user-select:text;color:#111}
+.doc h3{font-size:16px;margin:10px 0 2px;color:#111;border-bottom:1px solid var(--line)}
+@media print{body *{visibility:hidden}.doc,.doc *{visibility:visible}.doc{position:absolute;inset:0;border:0}}
+
+.langsel{border:1px solid var(--line);border-radius:99px;padding:6px 10px;background:var(--chaux);color:var(--encre);font-size:13px;font-weight:600;min-height:36px;max-width:128px}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--soft);border-radius:99px;padding:3px}
+.seg3 button{padding:6px 4px;border-radius:99px;font-size:13px;font-weight:700;color:var(--muted);min-height:34px}
+.seg3 button[aria-pressed="true"]{background:var(--chaux);color:var(--bleu);box-shadow:0 1px 3px rgba(15,59,61,.15)}
+.seg.wrap{display:flex;flex-wrap:wrap}.seg.wrap button{flex:1 1 auto}
+.plan{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--chaux)}
+.plan.hl{border:2px solid var(--bleu);background:var(--soft)}
+button.lock{display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:start;border:2px dashed var(--bleu);background:var(--soft)}
+.mini.sug{width:250px;display:flex;flex-direction:column;gap:8px;white-space:normal}
+.top .grow{flex:1}
+
+.salary[dir=ltr]{width:fit-content}
+
+/* v3 : suivi, plan d'action, communautés, confiance */
+.tabs{grid-template-columns:repeat(auto-fit,minmax(0,1fr))}
+.chip.st-sent{background:var(--soft);color:var(--muted)}
+.chip.st-seen{background:#def2f0;color:#0a6e70}
+.chip.st-short{background:#fff4d6;color:#7a5600}
+.chip.st-rejected{background:#fbe6e4;color:#a8322a}
+.chip.st-hired{background:#d9f3ea;color:#0f7a58}
+.chip.warnc{background:#fbe6e4;color:#a8322a}
+.warn{background:#fdecea;border:1px solid #f1b9b3;border-inline-start:5px solid var(--rouge);color:#7d221b;padding:12px 14px;border-radius:12px}
+.warn p{margin:4px 0 0;font-size:14px}
+.trust{font-size:13.5px;color:var(--muted);padding:8px 12px;border-radius:12px;background:var(--soft)}
+.trust.ok{background:#d9f3ea;color:#0f7a58;font-weight:700}
+.plan-box{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.stsel{min-height:36px;border:1px solid var(--line);border-radius:10px;padding:4px 8px;background:var(--chaux);font:inherit;color:var(--encre)}
+button.linkb{align-self:center;color:var(--muted);text-decoration:underline;font-size:13.5px;padding:8px}
+
+/* Taille proche de LinkedIn mobile : plus compact, plus d'offres à l'écran */
+body{font-size:14px;line-height:1.45}
+.top{padding:6px 12px}
+.top .logo{font-size:19px}
+main{padding:10px;gap:10px}
+.card{padding:12px;gap:8px;border-radius:12px}
+.card .main{padding:12px;gap:6px}
+.card .acts{padding:0 12px 10px}
+h1{font-size:21px}
+h2{font-size:16px}
+.sec h2{font-size:16px}
+h3{font-size:15px}
+.muted{font-size:13px}
+.chip{font-size:12px;padding:1px 9px}
+.chips{gap:5px}
+.salary{font-weight:700;font-size:14px}
+.btn{min-height:40px;padding:8px 14px;font-size:14px}
+.btn.small{min-height:34px;padding:4px 12px;font-size:13.5px}
+.ib{width:38px;height:38px}
+input,select,textarea{min-height:42px;padding:9px 12px;font-size:15px}
+.pills select{min-height:34px;padding:4px 10px;font-size:13px}
+.search{padding-top:10px}
+.ring{width:46px;height:46px;font-size:13px}
+.ring span{width:36px;height:36px}
+.arch{width:44px;height:52px}
+.arch.sm{width:30px;height:36px;font-size:12px}
+.arch.lg{width:72px;height:86px;font-size:26px}
+nav button span{font-size:11px}
+.hscroll .mini{width:210px;padding:10px}
+.mini.sug{width:230px}
+.seg3 button{min-height:30px;font-size:12.5px}
+.tabs button{padding:6px;font-size:13.5px}
+.chip.ok{background:#d9f3ea;color:#0f7a58}
+
+/* Finition plus fine : textes plus petits, graisses allégées */
+body{font-size:13.5px;line-height:1.45}
+h1{font-size:19px;font-weight:700}
+h2,.sec h2{font-size:15px;font-weight:700}
+h3{font-size:14px;font-weight:600}
+.muted{font-size:12.5px}
+.chip{font-size:11.5px;font-weight:600;padding:1px 8px}
+.salary{font-size:13px;font-weight:600}
+.btn{font-size:13.5px;font-weight:600;min-height:38px}
+.btn.small{font-size:13px;font-weight:600;min-height:32px}
+input,select,textarea{font-size:14px;min-height:40px}
+.pills select{font-size:12.5px;font-weight:500}
+.ring{width:42px;height:42px;font-size:12px;font-weight:700}
+.ring span{width:33px;height:33px}
+.top .logo{font-size:17px}
+.tabs button,.seg3 button{font-size:12.5px;font-weight:600}
+nav button span{font-size:10.5px}
+.arch{width:40px;height:48px;font-size:14px}
+.brandbig h1{font-size:28px}
+b,strong{font-weight:600}
+.card h2,.card h3{font-weight:600}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const T={
+fr:{slogan:"Ton réseau professionnel, en Tunisie et pour la Tunisie",lang:"Langue",create:"Créer mon compte",name:"Nom complet",type:"Je suis",seeker:"Chercheur d'emploi",recruiter:"Recruteur",freelance:"Freelance",student:"Étudiant",city:"Ville",start:"Commencer",feed:"Actualités",jobs:"Emplois",network:"Réseau",msgs:"Messages",cos:"Entreprises",profile:"Profil",
+search:"Métier, mot-clé…",allCities:"Toutes les villes",allSectors:"Tous les secteurs",allContracts:"Tous les contrats",sector:"Secteur",contract:"Contrat",apply:"Postuler en 1 clic",applied:"Candidature envoyée",msgCo:"Écrire à l'entreprise",publishJob:"Publier une offre",jobTitle:"Intitulé du poste",desc:"Description",pubBtn:"Publier",cancel:"Annuler",myJob:"Mon offre",results:"résultat(s)",none:"Aucun résultat. Élargissez vos filtres.",
+postPh:"Partagez une actualité, une offre, une formation…",post:"Publier",like:"J'aime",comment:"Commenter",commentPh:"Votre commentaire",send:"Envoyer",write:"Écrire un message…",connect:"Se connecter",pending:"Demande envoyée",connected:"Connecté",verified:"Entreprise vérifiée",reviews:"Avis des salariés",openJobs:"Offres publiées",site:"Site web",salary:"Salaire souhaité",month:"DT/mois",avail:"Disponibilité",a1:"Disponible",a2:"En poste",a3:"Étudiant",goal:"Section",g1:"Je cherche",g2:"Je recrute",skills:"Compétences",exp:"Parcours professionnel",edu:"Études & diplômes",about:"À propos",edit:"Modifier mon profil",save:"Enregistrer",skillsHelp:"Séparées par des virgules",linesHelp:"Une ligne par élément",myApps:"Mes candidatures",noApps:"Aucune candidature pour le moment.",demo:"Version de démonstration : entreprises, offres et personnes sont fictives. Vos données restent sur cet appareil.",title:"Titre professionnel",remote:"Télétravail possible",ago:"il y a",hours:"h",back:"Retour",findPeople:"Métier ou compétence…",noExp:"Non renseigné",reply:["Bonjour, merci pour votre message. Pouvez-vous m'envoyer votre CV ?","Avec plaisir, je reviens vers vous dans la journée.","Très bien, on peut organiser un appel cette semaine."],
+reviewsN:"avis",close:"Fermer"},
+ar:{slogan:"شبكتك المهنية، في تونس ومن أجل تونس",lang:"اللغة",create:"إنشاء حسابي",name:"الاسم الكامل",type:"أنا",seeker:"باحث عن عمل",recruiter:"مشغّل",freelance:"مستقل",student:"طالب",city:"المدينة",start:"ابدأ",feed:"الأخبار",jobs:"الوظائف",network:"الشبكة",msgs:"الرسائل",cos:"الشركات",profile:"الملف",
+search:"المهنة، كلمة مفتاحية…",allCities:"كل المدن",allSectors:"كل القطاعات",allContracts:"كل العقود",sector:"القطاع",contract:"العقد",apply:"قدّم بنقرة واحدة",applied:"تم إرسال الترشح",msgCo:"راسل الشركة",publishJob:"نشر عرض عمل",jobTitle:"عنوان الوظيفة",desc:"الوصف",pubBtn:"نشر",cancel:"إلغاء",myJob:"عرضي",results:"نتيجة",none:"لا توجد نتائج. وسّع المرشحات.",
+postPh:"شارك خبرا أو عرضا أو تكوينا…",post:"نشر",like:"أعجبني",comment:"تعليق",commentPh:"تعليقك",send:"إرسال",write:"اكتب رسالة…",connect:"تواصل",pending:"تم إرسال الطلب",connected:"متصل",verified:"شركة موثّقة",reviews:"آراء الموظفين",openJobs:"العروض المنشورة",site:"الموقع",salary:"الأجر المطلوب",month:"د.ت/شهر",avail:"التوفر",a1:"متاح",a2:"على رأس عمل",a3:"طالب",goal:"القسم",g1:"أبحث عن عمل",g2:"أوظّف",skills:"المهارات",exp:"المسار المهني",edu:"الدراسة والشهادات",about:"نبذة",edit:"تعديل ملفي",save:"حفظ",skillsHelp:"مفصولة بفواصل",linesHelp:"سطر لكل عنصر",myApps:"ترشحاتي",noApps:"لا توجد ترشحات بعد.",demo:"نسخة تجريبية: الشركات والعروض والأشخاص خيالية. بياناتك تبقى على هذا الجهاز.",title:"المسمى المهني",remote:"العمل عن بعد ممكن",ago:"منذ",hours:"س",back:"رجوع",findPeople:"مهنة أو مهارة…",noExp:"غير مذكور",reply:["مرحبا، شكرا على رسالتك. هل يمكنك إرسال سيرتك الذاتية؟","بكل سرور، سأعود إليك خلال اليوم.","حسنا، يمكننا تنظيم مكالمة هذا الأسبوع."],
+reviewsN:"رأي",close:"إغلاق"},
+en:{slogan:"Your professional network, in Tunisia and for Tunisia",lang:"Language",create:"Create my account",name:"Full name",type:"I am",seeker:"Job seeker",recruiter:"Recruiter",freelance:"Freelancer",student:"Student",city:"City",start:"Get started",feed:"News",jobs:"Jobs",network:"Network",msgs:"Messages",cos:"Companies",profile:"Profile",
+search:"Job, keyword…",allCities:"All cities",allSectors:"All sectors",allContracts:"All contracts",sector:"Sector",contract:"Contract",apply:"Apply in 1 click",applied:"Application sent",msgCo:"Message the company",publishJob:"Post a job",jobTitle:"Job title",desc:"Description",pubBtn:"Publish",cancel:"Cancel",myJob:"My listing",results:"result(s)",none:"No results. Widen your filters.",
+postPh:"Share news, an offer, a training…",post:"Post",like:"Like",comment:"Comment",commentPh:"Your comment",send:"Send",write:"Write a message…",connect:"Connect",pending:"Request sent",connected:"Connected",verified:"Verified company",reviews:"Employee reviews",openJobs:"Open positions",site:"Website",salary:"Desired salary",month:"TND/month",avail:"Availability",a1:"Available",a2:"Employed",a3:"Student",goal:"Section",g1:"I'm looking",g2:"I'm hiring",skills:"Skills",exp:"Experience",edu:"Education",about:"About",edit:"Edit my profile",save:"Save",skillsHelp:"Comma separated",linesHelp:"One item per line",myApps:"My applications",noApps:"No applications yet.",demo:"Demo version: companies, jobs and people are fictional. Your data stays on this device.",title:"Professional title",remote:"Remote possible",ago:"",hours:"h ago",back:"Back",findPeople:"Job or skill…",noExp:"Not provided",reply:["Hello, thanks for your message. Could you send me your CV?","Happy to, I'll get back to you today.","Great, we can set up a call this week."],
+reviewsN:"reviews",close:"Close"}
+};
+const CITIES=[["Tunis","تونس"],["Ariana","أريانة"],["Ben Arous","بن عروس"],["Sfax","صفاقس"],["Sousse","سوسة"],["Bizerte","بنزرت"],["Nabeul","نابل"],["Gabès","قابس"],["Médenine","مدنين"],["Monastir","المنستير"],["Kairouan","القيروان"],["Gafsa","قفصة"]];
+const SECT={it:{fr:"Informatique",ar:"إعلامية",en:"IT"},bank:{fr:"Banque",ar:"بنوك",en:"Banking"},health:{fr:"Santé",ar:"صحة",en:"Health"},tour:{fr:"Tourisme",ar:"سياحة",en:"Tourism"},agri:{fr:"Agriculture",ar:"فلاحة",en:"Agriculture"},btp:{fr:"BTP",ar:"بناء وأشغال",en:"Construction"},textile:{fr:"Textile",ar:"نسيج",en:"Textile"},trade:{fr:"Commerce",ar:"تجارة",en:"Retail"}};
+const CONTRACTS=["CDI","CDD","Stage","Freelance","CIVP","Karama","PFE"];
+const CTX={CIVP:{fr:"CIVP (insertion)",ar:"CIVP (إدماج)",en:"CIVP (insertion)"},Karama:{fr:"Karama",ar:"كرامة",en:"Karama"},PFE:{fr:"PFE (fin d'études)",ar:"مشروع ختم الدراسة",en:"PFE (graduation project)"},Stage:{fr:"Stage",ar:"تربص",en:"Internship"},Freelance:{fr:"Freelance",ar:"مستقل",en:"Freelance"},CDI:{fr:"CDI",ar:"عقد دائم",en:"Permanent"},CDD:{fr:"CDD",ar:"عقد محدد المدة",en:"Fixed-term"}};
+
+const X={
+fr:{email:"E-mail",password:"Mot de passe (8 caractères min.)",login:"Se connecter",signup:"Créer mon compte",toLogin:"J'ai déjà un compte",toSignup:"Je n'ai pas de compte",logout:"Se déconnecter",company:"Nom de l'entreprise",checkMail:"Compte créé. Ouvrez le lien reçu par e-mail pour le confirmer, puis connectez-vous.",accept:"Accepter",requests:"Demandes reçues",applicants:"Candidats",noApplicants:"Aucune candidature reçue.",noPosts:"Aucune publication. Soyez le premier à publier.",noJobs:"Aucune offre pour le moment.",noChats:"Aucune conversation. Écrivez à une entreprise depuis une offre, ou à un membre depuis le réseau.",loading:"Chargement…",write2:"Écrire",setupTitle:"Configuration requise",setupText:"Renseignez l'adresse et la clé publique de votre projet Supabase dans le fichier config.js, puis rechargez la page.",errGeneric:"Une erreur est survenue. Réessayez.",errLogin:"E-mail ou mot de passe incorrect.",errExists:"Un compte existe déjà avec cet e-mail.",errPass:"Le mot de passe doit contenir au moins 8 caractères.",errName:"Saisissez votre nom.",errCompany:"Saisissez le nom de l'entreprise.",errEmail:"Adresse e-mail invalide.",unverified:"Entreprise non vérifiée",offline:"Connexion impossible. Vérifiez votre réseau.",saved:"Enregistré",member:"Membre",you:"Vous"},
+ar:{email:"البريد الإلكتروني",password:"كلمة السر (8 أحرف على الأقل)",login:"تسجيل الدخول",signup:"إنشاء حسابي",toLogin:"لدي حساب",toSignup:"ليس لدي حساب",logout:"تسجيل الخروج",company:"اسم الشركة",checkMail:"تم إنشاء الحساب. افتح الرابط الذي وصلك بالبريد لتأكيده ثم سجّل الدخول.",accept:"قبول",requests:"الطلبات الواردة",applicants:"المترشحون",noApplicants:"لا توجد ترشحات.",noPosts:"لا توجد منشورات. كن أول من ينشر.",noJobs:"لا توجد عروض حاليا.",noChats:"لا توجد محادثات. راسل شركة من عرض عمل أو عضوا من الشبكة.",loading:"جارٍ التحميل…",write2:"مراسلة",setupTitle:"إعداد مطلوب",setupText:"أدخل عنوان مشروع Supabase والمفتاح العمومي في ملف config.js ثم أعد تحميل الصفحة.",errGeneric:"حدث خطأ. حاول مجددا.",errLogin:"البريد أو كلمة السر غير صحيحة.",errExists:"يوجد حساب بهذا البريد.",errPass:"كلمة السر يجب أن تحتوي على 8 أحرف على الأقل.",errName:"أدخل اسمك.",errCompany:"أدخل اسم الشركة.",errEmail:"بريد إلكتروني غير صالح.",unverified:"شركة غير موثّقة",offline:"تعذّر الاتصال. تحقق من الشبكة.",saved:"تم الحفظ",member:"عضو",you:"أنت"},
+en:{email:"Email",password:"Password (8 characters min.)",login:"Log in",signup:"Create my account",toLogin:"I already have an account",toSignup:"I don't have an account",logout:"Log out",company:"Company name",checkMail:"Account created. Open the link sent by email to confirm it, then log in.",accept:"Accept",requests:"Requests received",applicants:"Applicants",noApplicants:"No applications received.",noPosts:"No posts yet. Be the first to post.",noJobs:"No jobs yet.",noChats:"No conversations. Write to a company from a job, or to a member from the network.",loading:"Loading…",write2:"Message",setupTitle:"Setup required",setupText:"Enter your Supabase project URL and public key in config.js, then reload the page.",errGeneric:"Something went wrong. Try again.",errLogin:"Incorrect email or password.",errExists:"An account already exists with this email.",errPass:"Password must be at least 8 characters.",errName:"Enter your name.",errCompany:"Enter the company name.",errEmail:"Invalid email address.",unverified:"Unverified company",offline:"Cannot connect. Check your network.",saved:"Saved",member:"Member",you:"You"}
+};
+for(const k in X)Object.assign(T[k],X[k]);
+
+const ICONS={feed:'<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',jobs:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',network:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/>',msgs:'<path d="M21 12a8 8 0 0 1-11.7 7L3 21l2-5.5A8 8 0 1 1 21 12z"/>',cos:'<path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 10h4a1 1 0 0 1 1 1v10M3 21h18M8 8h3M8 12h3M8 16h3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',pin:'<path d="M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.800 12 21 12 21z"/><circle cx="12" cy="9.500" r="2.500"/>',close:'<path d="M6 6l12 12M18 6L6 18"/>',heart:'<path d="M12 20s-7.500-4.600-9.200-9.200C1.600 7.500 3.700 4.500 7 4.500c2 0 3.400 1 5 3 1.600-2 3-3 5-3 3.300 0 5.400 3 4.200 6.300C19.500 15.400 12 20 12 20z"/>',cmt:'<path d="M4 5h16v11H9l-5 4z"/>',badge:'<path d="M12 2l2.400 2.200 3.200-.4.900 3.100 2.800 1.700-1.100 3 1.100 3-2.800 1.700-.9 3.100-3.200-.4L12 22l-2.400-2.200-3.200.4-.9-3.100-2.800-1.700 1.100-3-1.100-3 2.800-1.700.9-3.100 3.200.4z"/><path d="M8.500 12l2.500 2.500 4.500-5" stroke="#fff"/>'};
+const ic=(n,cls)=>`<svg class="${cls||"ico"}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+
+let DEMO=false;
+const CFG=window.CARTHAGE_CONFIG||{url:"",key:""};
+const state={lang:"fr",authMode:"login",authMsg:"",me:null,uid:null,ready:false,loading:false,view:"feed",sheet:null,
+ profiles:[],jobs:[],apps:[],posts:[],likes:[],comments:[],conns:[],msgs:[],
+ q:"",fCity:"",fSect:"",fCon:"",pq:"",pCity:"",aType:"seeker",busy:false,saved:[],tab:"people",scope:"all",docs:[],email:"",comms:[],cmem:[],rstats:{},flagged:[],reps:[],ver:null};
+let sb=null,chan=null;
+const KEY="carthagepro_lang";
+const t=k=>{const a=T[state.lang];if(a&&a[k]!==undefined)return a[k];if(T.en[k]!==undefined)return T.en[k];return T.fr[k]};
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const cityL=c=>{const x=CITIES.find(a=>a[0]===c);return x?(state.lang==="ar"?x[1]:x[0]):c};
+const sectL=k=>{const s=SECT[k]||SECT.it;return s[state.lang]||s.en||s.fr};
+const conL=c=>{const s=CTX[c];return s[state.lang]||s.en||s.fr};
+const P=id=>state.profiles.find(p=>p.id===id);
+const coName=j=>{const o=P(j.owner);return o?(o.company_name||o.name||"—"):"—"};
+const init=n=>(n||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ");
+const salary=j=>j.max_salary?fmt(j.min_salary)+" – "+fmt(j.max_salary)+" "+t("month"):"";
+const val=id=>{const e=document.getElementById(id);return e?e.value:""};
+const isRec=()=>state.me&&state.me.type==="recruiter";
+const applied=j=>state.apps.some(a=>a.job_id===j.id&&a.applicant===state.uid);
+function toast(m){const d=document.createElement("div");d.textContent=m;d.setAttribute("role","status");d.style.cssText="position:absolute;inset-inline:16px;bottom:76px;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;z-index:9;text-align:center";app.appendChild(d);setTimeout(()=>d.remove(),3200)}
+function errMsg(e){const m=(e&&e.message||"").toLowerCase();
+ if(m.includes("invalid login"))return t("errLogin");if(m.includes("already")||m.includes("registered"))return t("errExists");
+ if(m.includes("password"))return t("errPass");if(m.includes("fetch")||m.includes("network"))return t("offline");return t("errGeneric")}
+
+/* ---------- Données ---------- */
+async function loadAll(){
+ state.loading=true;render();
+ const q=(p)=>p.then(r=>{if(r.error)throw r.error;return r.data||[]});
+ try{
+  const [pr,jb,ap,po,lk,cm,cn,ms,dl,co,cmb,rs,fl,rp,vr]=await Promise.all([
+   q(sb.from("profiles").select("id,name,type,city,country,title,avail,goal,salary,about,skills,exp,edu,company_name,sector,company_site,verified,plan,plan_until").limit(1000)),
+   q(sb.from("jobs").select("*").order("created_at",{ascending:false}).limit(300)),
+   q(sb.from("applications").select("id,job_id,applicant,created_at,status,status_at").limit(1000)),
+   q(sb.from("posts").select("*").order("created_at",{ascending:false}).limit(60)),
+   q(sb.from("post_likes").select("post_id,user_id").limit(5000)),
+   q(sb.from("comments").select("*").order("created_at",{ascending:true}).limit(2000)),
+   q(sb.from("connections").select("*").limit(1000)),
+   q(sb.from("messages").select("*").order("created_at",{ascending:true}).limit(1000)),
+   q(sb.from("doc_log").select("job_id,kind,created_at").limit(500)).catch(()=>[]),
+   q(sb.from("communities").select("*").limit(300)).catch(()=>[]),
+   q(sb.from("community_members").select("community_id,user_id").limit(5000)).catch(()=>[]),
+   q(sb.rpc("recruiter_stats")).catch(()=>[]),
+   q(sb.rpc("flagged_targets")).catch(()=>[]),
+   q(sb.from("reports").select("target_id").limit(500)).catch(()=>[]),
+   q(sb.from("verif_requests").select("user_id").limit(2)).catch(()=>[])]);
+  Object.assign(state,{profiles:pr,jobs:jb,apps:ap,posts:po,likes:lk,comments:cm,conns:cn,msgs:ms,docs:dl,comms:co,cmem:cmb,flagged:fl.map(x=>x.target_id),reps:rp.map(x=>x.target_id),ver:vr[0]||null});
+  state.rstats={};rs.forEach(r=>{state.rstats[r.owner]={total:Number(r.total),answered:Number(r.answered),avg_hours:r.avg_hours==null?null:Number(r.avg_hours)}});
+  state.me=pr.find(p=>p.id===state.uid)||state.me;
+  subscribe();
+ }catch(e){toast(errMsg(e))}
+ state.loading=false;state.ready=true;render();
+}
+function subscribe(){
+ if(chan){try{sb.removeChannel(chan)}catch(e){}}
+ chan=sb.channel("msg-"+state.uid).on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"receiver=eq."+state.uid},pl=>{
+  const m=pl.new;if(!m||state.msgs.some(x=>x.id===m.id))return;state.msgs.push(m);
+  if(!P(m.sender))sb.from("profiles").select("*").eq("id",m.sender).then(r=>{if(r.data&&r.data[0])state.profiles.push(r.data[0]);render("chatIn")});
+  else render(state.sheet&&state.sheet.k==="chat"?"chatIn":undefined);
+ }).subscribe();
+}
+async function boot(){
+ let l=null;try{l=localStorage.getItem(KEY)}catch(e){}if(!l){const n=(navigator.language||"fr").slice(0,2).toLowerCase();l=T[n]?n:"fr"}if(l&&T[l])state.lang=l;
+ if(!CFG.url||!CFG.key||!window.supabase){DEMO=true;state.ready=true;render();return}
+ sb=window.supabase.createClient(CFG.url,CFG.key);
+ try{const r=await sb.auth.getSession();const s=r.data&&r.data.session;if(s){state.uid=s.user.id;await loadAll();return}}catch(e){}
+ state.ready=true;render();
+}
+
+/* ---------- Vues ---------- */
+Object.assign(ICONS,{
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ bookmark:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'});
+const NX={
+fr:{home:"Accueil",hello:"Bonjour",strength:"Force de votre profil",complete:"Compléter mon profil",strong:"Votre profil est complet. Bravo.",forYou:"Offres près de vous",seeAll:"Tout voir",people:"Personnes",savedJobs:"Offres enregistrées",save:"Enregistrer",newTag:"Nouveau",postT:"Nouvelle publication",postBtn:"Publier",demoBtn:"Essayer la démonstration",demoNote:"Mode démonstration : les entreprises, offres et personnes sont fictives et rien n'est enregistré.",emptySaved:"Aucune offre enregistrée.",jobsN:"offre(s)",welcomeT:"Bienvenue sur CarthagePro",h_title:"Ajoutez votre titre professionnel",h_about:"Rédigez une courte présentation",h_skills:"Ajoutez au moins 3 compétences",h_exp:"Décrivez votre parcours",h_edu:"Ajoutez vos études",h_salary:"Indiquez votre salaire souhaité",h_site:"Ajoutez le site web de l'entreprise",shareWhat:"Partager une actualité, une offre, une formation…",orJob:"ou"},
+ar:{home:"الرئيسية",hello:"مرحبا",strength:"اكتمال ملفك",complete:"أكمل ملفي",strong:"ملفك مكتمل. أحسنت.",forYou:"عروض قريبة منك",seeAll:"عرض الكل",people:"الأشخاص",savedJobs:"العروض المحفوظة",save:"حفظ",newTag:"جديد",postT:"منشور جديد",postBtn:"نشر",demoBtn:"جرّب النسخة التجريبية",demoNote:"وضع تجريبي: الشركات والعروض والأشخاص خيالية ولا يُحفظ شيء.",emptySaved:"لا توجد عروض محفوظة.",jobsN:"عرض",welcomeT:"مرحبا بك في CarthagePro",h_title:"أضف مسمّاك المهني",h_about:"اكتب نبذة قصيرة عنك",h_skills:"أضف 3 مهارات على الأقل",h_exp:"صف مسارك المهني",h_edu:"أضف دراستك",h_salary:"حدّد الأجر المطلوب",h_site:"أضف موقع الشركة",shareWhat:"شارك خبرا أو عرضا أو تكوينا…",orJob:"أو"},
+en:{home:"Home",hello:"Hello",strength:"Profile strength",complete:"Complete my profile",strong:"Your profile is complete. Well done.",forYou:"Jobs near you",seeAll:"See all",people:"People",savedJobs:"Saved jobs",save:"Save",newTag:"New",postT:"New post",postBtn:"Post",demoBtn:"Try the demo",demoNote:"Demo mode: companies, jobs and people are fictional and nothing is saved.",emptySaved:"No saved jobs.",jobsN:"job(s)",welcomeT:"Welcome to CarthagePro",h_title:"Add your professional title",h_about:"Write a short introduction",h_skills:"Add at least 3 skills",h_exp:"Describe your experience",h_edu:"Add your education",h_salary:"Set your desired salary",h_site:"Add the company website",shareWhat:"Share news, an offer, a training…",orJob:"or"}
+};
+for(const k in NX)Object.assign(T[k],NX[k]);
+try{state.saved=JSON.parse(localStorage.getItem("cp_saved")||"[]")}catch(e){state.saved=[]}
+state.tab="people";
+const starSvg=(cls)=>`<svg class="${cls||"star"}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 5h14v14H5z"/><path d="M12 .8L23.200 12 12 23.200.8 12z"/><circle cx="12" cy="12" r="3.200" fill="var(--chaux)"/></svg>`;
+const vf=()=>`<span class="vf" title="${esc(t("verified"))}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 5h14v14H5z"/><path d="M12 .8L23.200 12 12 23.200.8 12z"/><path d="M8 12.200l2.800 2.800L16 9.500" fill="none" stroke="#fff" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
+const vfIf=p=>p&&p.verified?vf():"";
+const COLS=["","rouge","ocre","olive"];
+const avatar=(name,size)=>{let h=0;for(const c of String(name||"?"))h=(h*31+c.charCodeAt(0))%97;return `<div class="arch ${COLS[h%4]} ${size||""}" aria-hidden="true">${esc(init(name))}</div>`};
+const AIDE=["CIVP","Karama","PFE"];
+const isNew=j=>Date.now()-new Date(j.created_at).getTime()<3*864e5;
+function strength(){
+ const u=state.me,rec=u.type==="recruiter";
+ const items=rec?[["h_title",!!u.title],["h_about",!!u.about],["h_site",!!u.company_site]]:[["h_title",!!u.title],["h_about",!!u.about],["h_skills",(u.skills||[]).length>=3],["h_exp",!!u.exp],["h_edu",!!u.edu],["h_salary",!!u.salary]];
+ const done=items.filter(i=>i[1]).length;
+ const nx=items.find(i=>!i[1]);
+ return{pct:Math.round((done+1)/(items.length+1)*100),next:nx?nx[0]:null};
+}
+function view(){return({feed,jobs:jobsView,network:netView,msgs:msgsView,profile:profView})[state.view]()}
+const dateL=d=>new Date(d).toLocaleDateString(state.lang==="ar"?"ar-TN":state.lang==="en"?"en-GB":"fr-FR",{day:"numeric",month:"short"});
+/* ---------- Feuilles ---------- */
+function sheetWrap(title,body){
+ return `<div class="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="grab"></div><div class="hd"><h2 class="grow">${esc(title)}</h2><button class="ib" data-act="close" aria-label="${esc(t("close"))}">${ic("close")}</button></div><div class="bd">${body}</div></div></div>`;
+}
+function setup(){return `<div class="band"></div><div class="welcome"><div class="in"><h1>Carthage<b>Pro</b></h1><div class="note"><b>${esc(t("setupTitle"))}</b><br>${esc(t("setupText"))}</div></div></div>`}
+/* ---------- Mode démonstration (données fictives, en mémoire) ---------- */
+function makeDemo(){
+ const D=864e5,ago=d=>new Date(Date.now()-d*D).toISOString();let n=100;
+ const db={profiles:[
+  {id:"c1",name:"Société Exemple A",type:"recruiter",city:"Tunis",title:"Recrutement",company_name:"Atelier Digital Tunis",sector:"it",company_site:"",about:"Studio de développement web et mobile. Entreprise fictive.",verified:true,skills:[]},
+  {id:"c2",name:"Société Exemple B",type:"recruiter",city:"Sfax",title:"Ressources humaines",company_name:"Olivera Distribution",sector:"trade",about:"Distribution alimentaire. Entreprise fictive.",verified:true,skills:[]},
+  {id:"c6",name:"Société Exemple F",type:"recruiter",city:"Tunis",title:"Placement",company_name:"Horizon Placement",sector:"trade",about:"Agence de placement. Entreprise fictive.",verified:false,skills:[]},
+  {id:"c3",name:"Société Exemple C",type:"recruiter",city:"Sousse",title:"Recrutement",company_name:"Medina Hôtels",sector:"tour",about:"Groupe hôtelier. Entreprise fictive.",verified:false,skills:[]},
+  {id:"p1",name:"Amira Ben Salah",type:"seeker",city:"Tunis",title:"Développeuse front-end",avail:"a1",goal:"g1",skills:["JavaScript","React","CSS"],about:"",exp:"",edu:""},
+  {id:"p2",name:"Yassine Trabelsi",type:"freelance",city:"Sousse",title:"Graphiste indépendant",avail:"a2",goal:"g2",skills:["Photoshop","Illustrator","Branding"]},
+  {id:"c4",name:"Société Exemple D",type:"recruiter",city:"Paris",country:"FR",title:"Recrutement",company_name:"Lumière Tech",sector:"it",about:"Éditeur de logiciels. Entreprise fictive.",verified:true,skills:[]},
+  {id:"c5",name:"Société Exemple E",type:"recruiter",city:"Dubaï",country:"AE",title:"Recrutement",company_name:"Gulf Retail Group",sector:"trade",about:"Distribution. Entreprise fictive.",verified:false,skills:[]},
+  {id:"p4",name:"Lena Fischer",type:"seeker",city:"Berlin",country:"DE",title:"Développeuse back-end",avail:"a2",goal:"g1",skills:["Python","SQL","API","Docker"]},
+  {id:"p5",name:"Karim Mansouri",type:"entrepreneur",city:"Tunis",title:"Fondateur d'une start-up de logistique",avail:"a2",goal:"g1",skills:["Logistique","Vente","Gestion","Excel"]},
+  {id:"p3",name:"Nour Gharbi",type:"student",city:"Monastir",title:"Étudiante en gestion",avail:"a1",goal:"g1",skills:["Excel","Comptabilité"]}],
+  jobs:[
+  {id:"j1",owner:"c1",title:"Développeur web junior",city:"Tunis",sector:"it",contract:"CIVP",min_salary:900,max_salary:1300,remote:true,descr:"Rejoignez une petite équipe produit.\nTechnologies : JavaScript, API REST.",created_at:ago(1)},
+  {id:"j2",owner:"c2",title:"Responsable de magasin",city:"Sfax",sector:"trade",contract:"CDI",min_salary:1800,max_salary:2400,remote:false,descr:"Gestion d'équipe, stock et chiffre d'affaires du point de vente.",created_at:ago(2)},
+  {id:"j3",owner:"c3",title:"Réceptionniste",city:"Sousse",sector:"tour",contract:"CDD",min_salary:1100,max_salary:1400,remote:false,descr:"Accueil clientèle, français et anglais exigés.",created_at:ago(6)},
+  {id:"j4",owner:"c1",title:"Stage de fin d'études en design",city:"Tunis",sector:"it",contract:"PFE",min_salary:0,max_salary:0,remote:true,descr:"Stage de six mois, encadrement assuré.",created_at:ago(8)},
+  {id:"j6",owner:"c4",title:"Développeur front-end React",city:"Paris",country:"FR",sector:"it",contract:"CDI",min_salary:3200,max_salary:4200,remote:true,descr:"Technologies : JavaScript, React, CSS, tests. Travail à distance depuis la Tunisie possible.",created_at:ago(2)},
+  {id:"j7",owner:"c5",title:"Responsable de magasin",city:"Dubaï",country:"AE",sector:"trade",contract:"CDI",min_salary:9000,max_salary:12000,remote:false,descr:"Gestion d'équipe, stock et chiffre d'affaires du point de vente. Anglais courant.",created_at:ago(5)},
+  {id:"j8",owner:"c6",title:"Agent d'accueil, contrat garanti en Europe",city:"Tunis",sector:"trade",contract:"CDI",min_salary:3000,max_salary:4000,remote:false,descr:"Contrat garanti et visa garanti, sans entretien. Frais de dossier : 450 € à régler par mandat avant le départ. Gain facile, places limitées.",created_at:ago(1)},
+  {id:"j5",owner:"c2",title:"Comptable",city:"Tunis",sector:"trade",contract:"Karama",min_salary:1000,max_salary:1200,remote:false,descr:"Saisie, rapprochements bancaires, clôtures mensuelles.",created_at:ago(11)}],
+  applications:[
+  {id:"ap1",job_id:"j1",applicant:"p1",status:"short",created_at:ago(5),status_at:ago(4)},
+  {id:"ap2",job_id:"j1",applicant:"p3",status:"rejected",created_at:ago(6),status_at:ago(4.5)},
+  {id:"ap3",job_id:"j1",applicant:"p2",status:"short",created_at:ago(4),status_at:ago(3)},
+  {id:"ap4",job_id:"j4",applicant:"p3",status:"sent",created_at:ago(2)},
+  {id:"ap5",job_id:"j2",applicant:"p1",status:"sent",created_at:ago(3)},
+  {id:"ap6",job_id:"j2",applicant:"p2",status:"sent",created_at:ago(4)},
+  {id:"ap7",job_id:"j5",applicant:"p3",status:"sent",created_at:ago(5)}],
+  communities:[{id:"m1",name:"Tunis",kind:"city",created_by:"p1"},{id:"m2",name:"Anciens Université de Tunis",kind:"school",created_by:"p4"},{id:"m3",name:"Commerce et distribution",kind:"trade",created_by:"c2"},{id:"m4",name:"Sfax",kind:"city",created_by:"c2"},{id:"m5",name:"Développement web",kind:"trade",created_by:"p1"}],
+  community_members:[{community_id:"m1",user_id:"p1"},{community_id:"m1",user_id:"p2"},{community_id:"m1",user_id:"p5"},{community_id:"m1",user_id:"c1"},{community_id:"m2",user_id:"p1"},{community_id:"m2",user_id:"p4"},{community_id:"m3",user_id:"c2"},{community_id:"m3",user_id:"p5"},{community_id:"m3",user_id:"c5"},{community_id:"m5",user_id:"p1"},{community_id:"m5",user_id:"c1"},{community_id:"m5",user_id:"p4"}],
+  posts:[
+  {id:"s1",author:"c1",body:"Nous ouvrons deux postes à Tunis ce mois-ci. Les candidatures se font directement depuis l'application.",created_at:ago(1)},
+  {id:"s2",author:"p2",body:"Disponible pour vos projets d'identité visuelle à partir de décembre.",created_at:ago(3)}],
+  post_likes:[{post_id:"s1",user_id:"p1"},{post_id:"s1",user_id:"p3"}],comments:[],connections:[],messages:[]};
+ const tbl=x=>db[x]||(db[x]=[]);
+ class Q{constructor(t){this.t=t;this.f=[];this.op="select";this.one=false;this.ord=null;this.lim=1e9}
+  select(){return this}order(c,o){this.ord=[c,o&&o.ascending===false?-1:1];return this}limit(n){this.lim=n;return this}
+  eq(c,v){this.f.push([c,v]);return this}single(){this.one=true;return this}
+  insert(r){this.op="insert";this.r=r;return this}update(r){this.op="update";this.r=r;return this}delete(){this.op="delete";return this}
+  then(res,rej){return Promise.resolve().then(()=>this.run()).then(res,rej)}
+  m(x){return this.f.every(([c,v])=>x[c]===v)}
+  run(){const a=tbl(this.t);
+   if(this.op==="insert"){const r=Object.assign({id:"d"+(n++),created_at:new Date().toISOString()},this.r);a.push(r);return{data:this.one?r:[r],error:null}}
+   if(this.op==="update"){a.filter(x=>this.m(x)).forEach(x=>Object.assign(x,this.r));return{data:null,error:null}}
+   if(this.op==="delete"){db[this.t]=a.filter(x=>!this.m(x));return{data:null,error:null}}
+   let l=a.filter(x=>this.m(x)).slice();
+   if(this.ord)l.sort((x,y)=>(x[this.ord[0]]>y[this.ord[0]]?1:-1)*this.ord[1]);
+   l=l.slice(0,this.lim);return{data:this.one?l[0]:l,error:null}}}
+ const rpc=n=>{if(n==="flagged_targets")return Promise.resolve({data:[{target_id:"j8"}],error:null});
+  const m={};db.applications.forEach(a=>{const j=db.jobs.find(x=>x.id===a.job_id);if(!j)return;const r=m[j.owner]||(m[j.owner]={owner:j.owner,total:0,answered:0,h:0});r.total++;if(["short","rejected","hired"].includes(a.status)){r.answered++;r.h+=(new Date(a.status_at)-new Date(a.created_at))/36e5}});
+  return Promise.resolve({data:Object.values(m).map(r=>({owner:r.owner,total:r.total,answered:r.answered,avg_hours:r.answered?r.h/r.answered:null})),error:null})};
+ return{db,rpc,from:t=>new Q(t),channel:()=>({on(){return this},subscribe(){return this}}),removeChannel(){},
+  auth:{signOut:async()=>({}),getSession:async()=>({data:{session:null}})}};
+}
+function demoStart(){
+ const c=makeDemo();sb=c;
+ c.db.profiles.push({id:"me",name:"Visiteur Démo",type:"seeker",city:"Tunis",country:"TN",title:"Développeur web",avail:"a1",goal:"g1",salary:1100,skills:["JavaScript","HTML","CSS","Excel"],about:"Deux ans d'expérience en création de sites web pour des commerces.",exp:"Développeur web, agence locale (2 ans) : sites vitrines et boutiques en ligne\nStage de développement web (6 mois)",edu:"Licence en informatique",verified:false,plan:"free"});
+ c.db.applications.push({id:"ap8",job_id:"j1",applicant:"me",status:"short",created_at:new Date(Date.now()-3*864e5).toISOString(),status_at:new Date(Date.now()-864e5).toISOString()},{id:"ap9",job_id:"j5",applicant:"me",status:"sent",created_at:new Date(Date.now()-2*864e5).toISOString()});
+ c.db.connections.push({id:"k1",requester:"p1",addressee:"me",status:"pending",created_at:new Date().toISOString()});
+ c.db.messages.push({id:"m1",sender:"c1",receiver:"me",body:"Bonjour, votre profil nous intéresse. Êtes-vous disponible cette semaine ?",created_at:new Date().toISOString()});
+ state.uid="me";state.view="feed";return loadAll();
+}
+/* ---------- Langues et textes supplémentaires ---------- */
+const LANGS=[["fr","Français"],["ar","العربية"],["en","English"],["es","Español"],["de","Deutsch"],["it","Italiano"],["tr","Türkçe"],["pt","Português"]];
+const COUNTRIES=["TN","FR","DE","IT","ES","BE","CH","GB","CA","US","AE","SA","QA","TR","MA","DZ","EG","LY","PT","NL","SE"];
+const CUR={TN:"DT",FR:"€",DE:"€",IT:"€",ES:"€",BE:"€",PT:"€",NL:"€",GB:"£",US:"$",CA:"CAD",AE:"AED",SA:"SAR",QA:"QAR",CH:"CHF",TR:"TRY",MA:"MAD",DZ:"DZD",EG:"EGP",LY:"LYD",SE:"SEK"};
+const X2={
+fr:{entrepreneur:"Entrepreneur",country:"Pays",scopeTN:"Tunisie",scopeWorld:"International",scopeAll:"Partout",matchT:"Compatibilité avec votre profil",v_hi:"Très bon profil pour ce poste",v_ok:"Vous avez vos chances",v_mid:"À renforcer avant de postuler",v_lo:"Loin de cette offre",strengths:"Vos points forts",gaps:"À renforcer",adviceHi:"Postulez sans attendre : votre profil correspond bien à l'offre.",adviceOk:"Postulez en mettant en avant vos points forts. Complétez votre profil pour augmenter vos chances.",adviceMid:"Votre profil couvre une partie de l'offre. Renforcez les points ci-dessous ou visez d'abord des offres plus proches.",adviceLo:"Cette offre est éloignée de votre profil actuel. Regardez les offres mieux adaptées et les personnes suggérées pour vous rapprocher de ce métier.",estim:"Estimation calculée à partir des informations de votre profil. Elle ne remplace pas l'avis du recruteur.",sg_skills:"Compétences en lien : {s}",sg_city:"Même ville",sg_remote:"Télétravail possible",sg_salary:"Salaire compatible avec votre souhait",sg_avail:"Vous êtes disponible",gp_kw:"Mots de l'offre absents de votre profil : {s}",gp_sal:"Salaire proposé inférieur à votre souhait",gp_city:"Poste dans une autre ville ou un autre pays",gp_empty:"Profil peu rempli : ajoutez vos compétences et votre parcours",genLetter:"Lettre de motivation",genCV:"CV adapté à l'offre",docsNote:"Document basé uniquement sur votre profil. Rien n'est inventé : complétez votre profil pour l'enrichir. Relisez et modifiez le texte avant l'envoi.",missing:"Absent de votre profil (à ajouter seulement si c'est vrai) :",copy:"Copier",copied:"Copié",print:"Imprimer / PDF",sugT:"Personnes à connaître",sugSub:"Pour trouver un emploi, apprendre, collaborer ou élargir votre horizon.",r_recruit:"Recrute dans votre domaine ({n} offre(s) adaptée(s))",r_mentor:"Parcours proche du vôtre, plus avancé",r_partner:"Compétences complémentaires : {s}",r_peer:"Compétences en commun : {s}",r_city:"Dans votre ville",r_open:"Pour élargir votre horizon",r_client:"Client ou partenaire possible",moreSug:"Voir toutes les suggestions",upT:"Passez à Pro",upSub:"Vous avez atteint la limite gratuite des 30 derniers jours.",planFree:"Gratuit",planPro:"Pro",planRec:"Recruteur Pro",f_free1:"5 candidatures par mois",f_free2:"8 demandes de connexion par mois",f_free3:"3 lettres ou CV par mois",f_free4:"Score de compatibilité et 3 suggestions",f_pro1:"Candidatures et connexions illimitées",f_pro2:"Lettres et CV adaptés illimités",f_pro3:"Analyse complète de chaque offre",f_pro4:"Suggestions de réseau en Tunisie et à l'international",f_rec1:"Offres d'emploi illimitées (gratuit : 2 par mois)",payBtn:"Payer et activer",demoActivate:"Activer Pro (démonstration)",payNote:"Après le paiement, votre compte est activé sous 24 heures.",perMonth:"/ mois",perYear:"/ an",usage:"Utilisation sur 30 jours",q_apps:"Candidatures",q_conn:"Connexions",q_docs:"Documents",q_jobs:"Offres publiées",isPro:"Abonnement Pro actif",lockFull:"Analyse complète réservée aux abonnés Pro",seeMore:"Voir l'analyse complète",upBtn:"Voir les abonnements",contact:"Contact",availIs:"Disponibilité",proBadge:"Pro",offerFor:"Candidature",why_apps:"candidatures",why_conn:"demandes de connexion",why_docs:"documents",why_jobs:"offres",langName:"Langue"},
+ar:{entrepreneur:"رائد أعمال",country:"البلد",scopeTN:"تونس",scopeWorld:"دولي",scopeAll:"في كل مكان",matchT:"مدى ملاءمتك للعرض",v_hi:"ملفك مناسب جدا لهذا المنصب",v_ok:"لديك حظوظ جيدة",v_mid:"يلزم تعزيز ملفك قبل التقديم",v_lo:"بعيد عن هذا العرض",strengths:"نقاط قوتك",gaps:"نقاط تحتاج تعزيزا",adviceHi:"قدّم مباشرة: ملفك يطابق العرض جيدا.",adviceOk:"قدّم مع إبراز نقاط قوتك. أكمل ملفك لتزيد حظوظك.",adviceMid:"ملفك يغطي جزءا من العرض. عزّز النقاط أدناه أو استهدف عروضا أقرب أولا.",adviceLo:"هذا العرض بعيد عن ملفك الحالي. اطّلع على العروض الأنسب والأشخاص المقترحين للاقتراب من هذه المهنة.",estim:"تقدير محسوب من معلومات ملفك ولا يعوّض رأي المشغّل.",sg_skills:"مهارات مرتبطة: {s}",sg_city:"نفس المدينة",sg_remote:"العمل عن بعد ممكن",sg_salary:"الأجر يوافق طلبك",sg_avail:"أنت متاح",gp_kw:"كلمات في العرض غير موجودة في ملفك: {s}",gp_sal:"الأجر المعروض أقل من طلبك",gp_city:"المنصب في مدينة أو بلد آخر",gp_empty:"ملفك غير مكتمل: أضف مهاراتك ومسارك",genLetter:"رسالة تحفيز",genCV:"سيرة ذاتية مكيّفة مع العرض",docsNote:"الوثيقة مبنية على ملفك فقط ولا شيء مختلق: أكمل ملفك لإثرائها. راجع النص وعدّله قبل الإرسال.",missing:"غير موجود في ملفك (أضفه فقط إذا كان صحيحا):",copy:"نسخ",copied:"تم النسخ",print:"طباعة / PDF",sugT:"أشخاص يستحق التعرف عليهم",sugSub:"لإيجاد عمل أو للتعلّم أو للتعاون أو لتوسيع آفاقك.",r_recruit:"يوظّف في مجالك ({n} عرض مناسب)",r_mentor:"مسار قريب من مسارك وأكثر تقدّما",r_partner:"مهارات مكمّلة: {s}",r_peer:"مهارات مشتركة: {s}",r_city:"في مدينتك",r_open:"لتوسيع آفاقك",r_client:"عميل أو شريك محتمل",moreSug:"عرض كل الاقتراحات",upT:"انتقل إلى Pro",upSub:"بلغت الحد المجاني خلال آخر 30 يوما.",planFree:"مجاني",planPro:"Pro",planRec:"مشغّل Pro",f_free1:"5 ترشحات في الشهر",f_free2:"8 طلبات تواصل في الشهر",f_free3:"3 رسائل أو سير ذاتية في الشهر",f_free4:"نسبة الملاءمة و3 اقتراحات",f_pro1:"ترشحات وتواصل بلا حدود",f_pro2:"رسائل وسير ذاتية مكيّفة بلا حدود",f_pro3:"تحليل كامل لكل عرض",f_pro4:"اقتراحات شبكة في تونس وفي العالم",f_rec1:"عروض عمل بلا حدود (مجانا: عرضان في الشهر)",payBtn:"ادفع وفعّل",demoActivate:"تفعيل Pro (تجريبي)",payNote:"بعد الدفع يُفعَّل حسابك خلال 24 ساعة.",perMonth:"/ شهر",perYear:"/ سنة",usage:"الاستعمال خلال 30 يوما",q_apps:"الترشحات",q_conn:"التواصل",q_docs:"الوثائق",q_jobs:"العروض المنشورة",isPro:"اشتراك Pro مفعّل",lockFull:"التحليل الكامل لمشتركي Pro",seeMore:"عرض التحليل الكامل",upBtn:"عرض الاشتراكات",contact:"الاتصال",availIs:"التوفر",proBadge:"Pro",offerFor:"ترشح",why_apps:"ترشحات",why_conn:"طلبات تواصل",why_docs:"وثائق",why_jobs:"عروض",langName:"اللغة"},
+en:{entrepreneur:"Entrepreneur",country:"Country",scopeTN:"Tunisia",scopeWorld:"International",scopeAll:"Everywhere",matchT:"Match with your profile",v_hi:"Strong fit for this job",v_ok:"You have a good chance",v_mid:"Build up before applying",v_lo:"Far from this job",strengths:"Your strengths",gaps:"To strengthen",adviceHi:"Apply now: your profile fits the job well.",adviceOk:"Apply and highlight your strengths. Complete your profile to improve your chances.",adviceMid:"Your profile covers part of the job. Strengthen the points below, or aim at closer jobs first.",adviceLo:"This job is far from your current profile. See better-suited jobs and suggested people to move toward this field.",estim:"Estimate based on your profile. It does not replace the recruiter's judgment.",sg_skills:"Related skills: {s}",sg_city:"Same city",sg_remote:"Remote possible",sg_salary:"Salary fits your wish",sg_avail:"You are available",gp_kw:"Words in the job missing from your profile: {s}",gp_sal:"Offered salary is below your wish",gp_city:"Job in another city or country",gp_empty:"Profile is mostly empty: add your skills and experience",genLetter:"Cover letter",genCV:"CV tailored to the job",docsNote:"Based only on your profile. Nothing is invented: complete your profile to enrich it. Read and edit the text before sending.",missing:"Missing from your profile (add only if true):",copy:"Copy",copied:"Copied",print:"Print / PDF",sugT:"People to know",sugSub:"To find a job, learn, collaborate or widen your horizon.",r_recruit:"Hiring in your field ({n} matching job(s))",r_mentor:"Path close to yours, more advanced",r_partner:"Complementary skills: {s}",r_peer:"Skills in common: {s}",r_city:"In your city",r_open:"To widen your horizon",r_client:"Possible client or partner",moreSug:"See all suggestions",upT:"Go Pro",upSub:"You reached the free limit for the last 30 days.",planFree:"Free",planPro:"Pro",planRec:"Recruiter Pro",f_free1:"5 applications per month",f_free2:"8 connection requests per month",f_free3:"3 letters or CVs per month",f_free4:"Match score and 3 suggestions",f_pro1:"Unlimited applications and connections",f_pro2:"Unlimited tailored letters and CVs",f_pro3:"Full analysis of every job",f_pro4:"Network suggestions in Tunisia and abroad",f_rec1:"Unlimited job posts (free: 2 per month)",payBtn:"Pay and activate",demoActivate:"Activate Pro (demo)",payNote:"After payment, your account is activated within 24 hours.",perMonth:"/ month",perYear:"/ year",usage:"Usage over 30 days",q_apps:"Applications",q_conn:"Connections",q_docs:"Documents",q_jobs:"Jobs posted",isPro:"Pro subscription active",lockFull:"Full analysis is for Pro subscribers",seeMore:"See full analysis",upBtn:"See plans",contact:"Contact",availIs:"Availability",proBadge:"Pro",offerFor:"Application",why_apps:"applications",why_conn:"connection requests",why_docs:"documents",why_jobs:"jobs",langName:"Language"}
+};
+for(const k in X2)Object.assign(T[k],X2[k]);
+const X3={
+fr:{st_sent:"Envoyée",st_seen:"Vue",st_short:"Présélectionné",st_rejected:"Non retenue",st_hired:"Retenu",statusT:"Statut",d_lt1:"moins d'un jour",d_1:"1 jour",d_n:"{n} jours",resp_fmt:"Répond à {p} % des candidatures, en {d}",resp_fmt2:"Répond à {p} % des candidatures",resp_new:"Recruteur récent : pas encore de statistiques",
+planT:"Plan d'action pour atteindre {n} %",planNow:"Score actuel {a} % : jusqu'à {b} % en maîtrisant ces compétences.",planAdd:"Acquérir ou valider : {s} (+{g} points)",planSal:"Revoir votre prétention salariale ou viser une offre mieux payée",planCity:"Postuler à une offre en télétravail ou envisager de déménager",planProf:"Compléter votre profil : compétences et expérience",planNote:"N'ajoutez une compétence à votre profil que si vous la maîtrisez vraiment. Sinon, formez-vous d'abord.",planOk:"Votre profil atteint déjà l'objectif : vous pouvez postuler.",planLock:"Plan complet réservé aux abonnés Pro",
+commT:"Communautés",commSub:"Retrouvez les gens de votre école, de votre ville ou de votre métier.",commFor:"Suggérées pour vous",commAll:"Toutes les communautés",join:"Rejoindre",leave:"Quitter",joined:"Membre",members:"{n} membre(s)",commNew:"Créer une communauté",commName:"Nom (ex. : Sfax, Pâtisserie, Université de Sousse)",commKind:"Type",k_school:"École / université",k_city:"Ville",k_trade:"Métier / secteur",k_other:"Autre",commEmpty:"Aucune communauté pour l'instant. Créez la première.",commCreate:"Créer et rejoindre",commMembers:"Membres",commYou:"Vous",commMade:"Communauté prête",commMkCity:"Créer la communauté de {c}",
+tr_ver:"Entreprise vérifiée",tr_unver:"Entreprise non vérifiée. Ne payez jamais pour obtenir un emploi.",caution:"Prudence",scamT:"Signes d'arnaque détectés",flaggedT:"Signalée par plusieurs utilisateurs",scamTxt:"Cette annonce parle d'argent à payer ou de promesses trop belles. Un vrai recruteur ne demande jamais de frais au candidat. Ne versez rien et ne donnez pas vos données bancaires.",reportBtn:"Signaler cette offre",reportCo:"Signaler cette entreprise",reportT:"Signaler cette offre",reportSub:"Pourquoi signalez-vous ?",rp_scam:"Demande d'argent ou arnaque",rp_fake:"Offre fausse ou trompeuse",rp_discrimination:"Discrimination",rp_other:"Autre raison",reportDone:"Merci, le signalement est enregistré.",verReq:"Demander le badge Vérifié",verT:"Vérifier mon entreprise",verTax:"Matricule fiscal",verSite:"Site web ou page de l'entreprise",verPhone:"Téléphone de l'entreprise",verNote:"L'équipe CarthagePro examine votre demande à la main avant d'afficher le badge.",verSend:"Envoyer la demande",verSent:"Demande envoyée",verPending:"Demande de vérification en cours d'examen."},
+ar:{st_sent:"مرسل",st_seen:"تمت المشاهدة",st_short:"مرشّح",st_rejected:"غير مقبول",st_hired:"تم القبول",statusT:"الحالة",d_lt1:"أقل من يوم",d_1:"يوم واحد",d_n:"{n} أيام",resp_fmt:"يردّ على {p}٪ من الترشحات خلال {d}",resp_fmt2:"يردّ على {p}٪ من الترشحات",resp_new:"مشغّل جديد: لا توجد إحصائيات بعد",
+planT:"خطة للوصول إلى {n}٪",planNow:"نتيجتك الحالية {a}٪: حتى {b}٪ عند إتقان هذه المهارات.",planAdd:"اكتساب أو توثيق: {s} (+{g} نقطة)",planSal:"راجع طلبك من الأجر أو اختر عرضا أعلى أجرا",planCity:"قدّم لعرض عن بعد أو فكّر في الانتقال",planProf:"أكمل ملفك: المهارات والخبرة",planNote:"لا تضف مهارة إلى ملفك إلا إذا كنت تتقنها فعلا. وإلا فتكوّن أولا.",planOk:"ملفك يحقق الهدف: يمكنك التقديم.",planLock:"الخطة الكاملة للمشتركين Pro",
+commT:"المجتمعات",commSub:"تواصل مع أبناء مدرستك ومدينتك ومهنتك.",commFor:"مقترحة لك",commAll:"كل المجتمعات",join:"انضمام",leave:"مغادرة",joined:"عضو",members:"{n} عضو",commNew:"إنشاء مجتمع",commName:"الاسم (مثال: صفاقس، الحلويات، جامعة سوسة)",commKind:"النوع",k_school:"مدرسة / جامعة",k_city:"مدينة",k_trade:"مهنة / قطاع",k_other:"أخرى",commEmpty:"لا توجد مجتمعات بعد. أنشئ أول مجتمع.",commCreate:"إنشاء والانضمام",commMembers:"الأعضاء",commYou:"أنت",commMade:"المجتمع جاهز",commMkCity:"إنشاء مجتمع {c}",
+tr_ver:"شركة موثّقة",tr_unver:"شركة غير موثّقة. لا تدفع أبدا مقابل الحصول على عمل.",caution:"احذر",scamT:"علامات احتيال",flaggedT:"أبلغ عنه عدة مستخدمين",scamTxt:"يتحدث هذا الإعلان عن مبالغ يجب دفعها أو وعود مبالغ فيها. المشغّل الحقيقي لا يطلب أي رسوم من المترشح. لا تدفع شيئا ولا تعط بياناتك البنكية.",reportBtn:"الإبلاغ عن هذا العرض",reportCo:"الإبلاغ عن هذه الشركة",reportT:"الإبلاغ عن هذا العرض",reportSub:"لماذا تبلّغ؟",rp_scam:"طلب مال أو احتيال",rp_fake:"عرض مزيّف أو مضلل",rp_discrimination:"تمييز",rp_other:"سبب آخر",reportDone:"شكرا، تم تسجيل البلاغ.",verReq:"طلب شارة التوثيق",verT:"توثيق شركتي",verTax:"المعرّف الجبائي",verSite:"موقع الشركة أو صفحتها",verPhone:"هاتف الشركة",verNote:"يراجع فريق CarthagePro طلبك يدويا قبل عرض الشارة.",verSend:"إرسال الطلب",verSent:"تم إرسال الطلب",verPending:"طلب التوثيق قيد المراجعة."},
+en:{st_sent:"Sent",st_seen:"Seen",st_short:"Shortlisted",st_rejected:"Not selected",st_hired:"Hired",statusT:"Status",d_lt1:"under a day",d_1:"1 day",d_n:"{n} days",resp_fmt:"Answers {p}% of applications, in {d}",resp_fmt2:"Answers {p}% of applications",resp_new:"New recruiter: no statistics yet",
+planT:"Action plan to reach {n}%",planNow:"Current score {a}%: up to {b}% once you master these skills.",planAdd:"Learn or prove: {s} (+{g} points)",planSal:"Review your salary wish or aim at a better-paid job",planCity:"Apply to a remote job or consider moving",planProf:"Complete your profile: skills and experience",planNote:"Add a skill to your profile only if you truly master it. Otherwise, train first.",planOk:"Your profile already reaches the goal: you can apply.",planLock:"Full plan is for Pro subscribers",
+commT:"Communities",commSub:"Meet people from your school, your city or your trade.",commFor:"Suggested for you",commAll:"All communities",join:"Join",leave:"Leave",joined:"Member",members:"{n} member(s)",commNew:"Create a community",commName:"Name (e.g. Sfax, Pastry, University of Sousse)",commKind:"Type",k_school:"School / university",k_city:"City",k_trade:"Trade / sector",k_other:"Other",commEmpty:"No community yet. Create the first one.",commCreate:"Create and join",commMembers:"Members",commYou:"You",commMade:"Community ready",commMkCity:"Create the community of {c}",
+tr_ver:"Verified company",tr_unver:"Unverified company. Never pay to get a job.",caution:"Caution",scamT:"Scam signs detected",flaggedT:"Reported by several users",scamTxt:"This ad mentions money to pay or promises that are too good. A real recruiter never asks the candidate for fees. Do not pay and do not share bank details.",reportBtn:"Report this job",reportCo:"Report this company",reportT:"Report this job",reportSub:"Why are you reporting?",rp_scam:"Asks for money or scam",rp_fake:"Fake or misleading job",rp_discrimination:"Discrimination",rp_other:"Other reason",reportDone:"Thank you, your report is saved.",verReq:"Request the Verified badge",verT:"Verify my company",verTax:"Tax ID",verSite:"Company website or page",verPhone:"Company phone",verNote:"The CarthagePro team reviews your request by hand before showing the badge.",verSend:"Send request",verSent:"Request sent",verPending:"Verification request under review."}
+};
+for(const k in X3)Object.assign(T[k],X3[k]);
+
+/* Langues supplémentaires : textes principaux (le reste s'affiche en anglais) */
+const CORE="slogan,create,name,type,seeker,recruiter,freelance,student,entrepreneur,city,country,home,jobs,network,msgs,cos,profile,search,allCities,apply,applied,publishJob,connect,pending,connected,send,write,email,password,login,signup,toLogin,toSignup,logout,company,loading,close,save,edit,skills,about,exp,edu,noExp,hello,strength,complete,forYou,seeAll,people,demoBtn,savedJobs,matchT,v_hi,v_ok,v_mid,v_lo,strengths,gaps,genLetter,genCV,copy,copied,print,sugT,scopeTN,scopeWorld,scopeAll,upT,planFree,planPro,payBtn,month,results,none,like,post,remote,findPeople,write2,accept,requests,a1,a2,a3,newTag,postT,postBtn,usage,lockFull,seeMore,upBtn".split(",");
+const MORE={
+es:"Tu red profesional, en Túnez y en el mundo|Crear mi cuenta|Nombre completo|Soy|Buscando empleo|Reclutador|Freelance|Estudiante|Emprendedor|Ciudad|País|Inicio|Empleos|Red|Mensajes|Empresas|Perfil|Puesto, palabra clave…|Todas las ciudades|Postular con 1 clic|Candidatura enviada|Publicar una oferta|Conectar|Solicitud enviada|Conectado|Enviar|Escribe un mensaje…|Correo electrónico|Contraseña (mín. 8 caracteres)|Iniciar sesión|Crear mi cuenta|Ya tengo una cuenta|No tengo cuenta|Cerrar sesión|Nombre de la empresa|Cargando…|Cerrar|Guardar|Editar mi perfil|Competencias|Acerca de|Trayectoria profesional|Estudios|No indicado|Hola|Fuerza de tu perfil|Completar mi perfil|Ofertas para ti|Ver todo|Personas|Probar la demostración|Ofertas guardadas|Compatibilidad con tu perfil|Muy buen perfil para este puesto|Tienes opciones|A reforzar antes de postular|Lejos de esta oferta|Tus puntos fuertes|A reforzar|Carta de motivación|CV adaptado a la oferta|Copiar|Copiado|Imprimir / PDF|Personas que conocer|Túnez|Internacional|En todas partes|Pasa a Pro|Gratis|Pro|Pagar y activar|DT/mes|resultado(s)|Sin resultados. Amplía los filtros.|Me gusta|Publicar|Teletrabajo posible|Puesto o competencia…|Escribir|Aceptar|Solicitudes recibidas|Disponible|Empleado|Estudiante|Nuevo|Nueva publicación|Publicar|Uso en 30 días|Análisis completo solo para suscriptores Pro|Ver el análisis completo|Ver los planes",
+de:"Dein berufliches Netzwerk, in Tunesien und weltweit|Konto erstellen|Vollständiger Name|Ich bin|Jobsuchend|Recruiter|Freelancer|Student|Unternehmer|Stadt|Land|Start|Jobs|Netzwerk|Nachrichten|Unternehmen|Profil|Beruf, Stichwort…|Alle Städte|Mit 1 Klick bewerben|Bewerbung gesendet|Stelle veröffentlichen|Vernetzen|Anfrage gesendet|Vernetzt|Senden|Nachricht schreiben…|E-Mail|Passwort (mind. 8 Zeichen)|Anmelden|Konto erstellen|Ich habe schon ein Konto|Ich habe kein Konto|Abmelden|Firmenname|Wird geladen…|Schließen|Speichern|Profil bearbeiten|Kompetenzen|Über mich|Berufserfahrung|Ausbildung|Nicht angegeben|Hallo|Profilstärke|Profil vervollständigen|Stellen für dich|Alle ansehen|Personen|Demo ausprobieren|Gespeicherte Stellen|Übereinstimmung mit deinem Profil|Sehr gutes Profil für diese Stelle|Du hast gute Chancen|Vor der Bewerbung stärken|Weit von dieser Stelle entfernt|Deine Stärken|Zu stärken|Anschreiben|Auf die Stelle zugeschnittener Lebenslauf|Kopieren|Kopiert|Drucken / PDF|Interessante Kontakte|Tunesien|International|Überall|Auf Pro wechseln|Kostenlos|Pro|Bezahlen und aktivieren|DT/Monat|Ergebnis(se)|Keine Ergebnisse. Filter erweitern.|Gefällt mir|Veröffentlichen|Homeoffice möglich|Beruf oder Kompetenz…|Schreiben|Annehmen|Erhaltene Anfragen|Verfügbar|Angestellt|Student|Neu|Neuer Beitrag|Veröffentlichen|Nutzung in 30 Tagen|Vollständige Analyse nur für Pro-Abonnenten|Vollständige Analyse ansehen|Tarife ansehen",
+it:"La tua rete professionale, in Tunisia e nel mondo|Crea il mio account|Nome completo|Sono|In cerca di lavoro|Recruiter|Freelance|Studente|Imprenditore|Città|Paese|Home|Lavoro|Rete|Messaggi|Aziende|Profilo|Mestiere, parola chiave…|Tutte le città|Candidati con 1 clic|Candidatura inviata|Pubblica un'offerta|Collegati|Richiesta inviata|Collegato|Invia|Scrivi un messaggio…|E-mail|Password (min. 8 caratteri)|Accedi|Crea il mio account|Ho già un account|Non ho un account|Esci|Nome dell'azienda|Caricamento…|Chiudi|Salva|Modifica il profilo|Competenze|Chi sono|Percorso professionale|Studi|Non indicato|Ciao|Forza del profilo|Completa il profilo|Offerte per te|Vedi tutto|Persone|Prova la demo|Offerte salvate|Compatibilità con il tuo profilo|Ottimo profilo per questo ruolo|Hai buone possibilità|Da rafforzare prima di candidarti|Lontano da questa offerta|I tuoi punti di forza|Da rafforzare|Lettera di presentazione|CV adattato all'offerta|Copia|Copiato|Stampa / PDF|Persone da conoscere|Tunisia|Internazionale|Ovunque|Passa a Pro|Gratis|Pro|Paga e attiva|DT/mese|risultato/i|Nessun risultato. Amplia i filtri.|Mi piace|Pubblica|Lavoro da remoto possibile|Mestiere o competenza…|Scrivi|Accetta|Richieste ricevute|Disponibile|Occupato|Studente|Nuovo|Nuovo post|Pubblica|Utilizzo in 30 giorni|Analisi completa solo per abbonati Pro|Vedi l'analisi completa|Vedi i piani",
+tr:"Tunus'ta ve dünyada profesyonel ağın|Hesap oluştur|Ad soyad|Ben|İş arıyorum|İşe alımcı|Serbest çalışan|Öğrenci|Girişimci|Şehir|Ülke|Ana sayfa|İşler|Ağ|Mesajlar|Şirketler|Profil|Meslek, anahtar kelime…|Tüm şehirler|Tek tıkla başvur|Başvuru gönderildi|İlan yayınla|Bağlan|İstek gönderildi|Bağlandı|Gönder|Mesaj yaz…|E-posta|Şifre (en az 8 karakter)|Giriş yap|Hesap oluştur|Hesabım var|Hesabım yok|Çıkış yap|Şirket adı|Yükleniyor…|Kapat|Kaydet|Profili düzenle|Yetenekler|Hakkında|Deneyim|Eğitim|Belirtilmemiş|Merhaba|Profil gücü|Profili tamamla|Sana uygun ilanlar|Tümünü gör|Kişiler|Demoyu dene|Kayıtlı ilanlar|Profilinle uyum|Bu iş için çok iyi bir profil|Şansın var|Başvurmadan önce güçlendir|Bu ilandan uzak|Güçlü yönlerin|Güçlendirilecekler|Ön yazı|İlana uyarlanmış CV|Kopyala|Kopyalandı|Yazdır / PDF|Tanıman gereken kişiler|Tunus|Uluslararası|Her yerde|Pro'ya geç|Ücretsiz|Pro|Öde ve etkinleştir|DT/ay|sonuç|Sonuç yok. Filtreleri genişlet.|Beğen|Yayınla|Uzaktan çalışma mümkün|Meslek veya yetenek…|Yaz|Kabul et|Gelen istekler|Müsait|Çalışıyor|Öğrenci|Yeni|Yeni gönderi|Yayınla|30 günlük kullanım|Tam analiz yalnızca Pro aboneler içindir|Tam analizi gör|Planları gör",
+pt:"A tua rede profissional, na Tunísia e no mundo|Criar a minha conta|Nome completo|Eu sou|À procura de emprego|Recrutador|Freelancer|Estudante|Empreendedor|Cidade|País|Início|Empregos|Rede|Mensagens|Empresas|Perfil|Profissão, palavra-chave…|Todas as cidades|Candidatar com 1 clique|Candidatura enviada|Publicar uma oferta|Ligar|Pedido enviado|Ligado|Enviar|Escrever uma mensagem…|E-mail|Palavra-passe (mín. 8 caracteres)|Iniciar sessão|Criar a minha conta|Já tenho conta|Não tenho conta|Terminar sessão|Nome da empresa|A carregar…|Fechar|Guardar|Editar o perfil|Competências|Sobre|Percurso profissional|Estudos|Não indicado|Olá|Força do perfil|Completar o perfil|Ofertas para ti|Ver tudo|Pessoas|Experimentar a demonstração|Ofertas guardadas|Compatibilidade com o teu perfil|Ótimo perfil para esta vaga|Tens boas hipóteses|A reforçar antes de candidatar|Longe desta oferta|Os teus pontos fortes|A reforçar|Carta de motivação|CV adaptado à oferta|Copiar|Copiado|Imprimir / PDF|Pessoas a conhecer|Tunísia|Internacional|Em todo o lado|Passar a Pro|Grátis|Pro|Pagar e ativar|DT/mês|resultado(s)|Sem resultados. Alarga os filtros.|Gosto|Publicar|Teletrabalho possível|Profissão ou competência…|Escrever|Aceitar|Pedidos recebidos|Disponível|Empregado|Estudante|Novo|Nova publicação|Publicar|Utilização em 30 dias|Análise completa só para subscritores Pro|Ver a análise completa|Ver os planos"
+};
+for(const l in MORE){const v=MORE[l].split("|");T[l]={};
+ if(v.length!==CORE.length)console.error("i18n "+l+": "+v.length+" ≠ "+CORE.length);
+ CORE.forEach((k,i)=>{if(v[i]!==undefined)T[l][k]=v[i]})}
+
+/* ---------- Moteur : compatibilité, documents, suggestions, quotas ---------- */
+const fmtT=(k,o)=>t(k).replace(/\{(\w+)\}/g,(m,x)=>o&&o[x]!==undefined?o[x]:"");
+const nrm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const STOP=new Set("de du des les la le et en un une pour avec dans sur par au aux ou qui que est sont pas the and for with you are your our from that this will have has not but can all any des vos votre notre nous vous poste offre equipe entreprise travail experience candidat profil mission missions sein etre avoir plus tres sera ainsi egalement selon chez cette ces son ses leur leurs sous entre dont afin lors".split(" "));
+function toks(s){const o=[],seen=new Set();String(nrm(s)).split(/[^a-z0-9؀-ۿ+#.]+/).forEach(w=>{w=w.replace(/^[.]+|[.]+$/g,"");if(w.length>4&&w.endsWith("s"))w=w.slice(0,-1);if(w.length>=3&&!STOP.has(w)&&!seen.has(w)){seen.add(w);o.push(w)}});return o}
+const profText=u=>[(u.skills||[]).join(" "),u.title,u.exp,u.edu,u.about].join(" ");
+const isPro=u=>!!u&&u.plan==="pro"&&(!u.plan_until||new Date(u.plan_until)>new Date());
+const LIM={apps:5,conn:8,docs:3,jobs:2};
+const recent=d=>Date.now()-new Date(d).getTime()<30*864e5;
+function used(k){const id=state.uid;
+ if(k==="apps")return state.apps.filter(a=>a.applicant===id&&recent(a.created_at)).length;
+ if(k==="conn")return state.conns.filter(c=>c.requester===id&&recent(c.created_at)).length;
+ if(k==="docs")return state.docs.filter(d=>recent(d.created_at)).length;
+ return state.jobs.filter(j=>j.owner===id&&recent(j.created_at)).length}
+function gate(k){if(isPro(state.me)||used(k)<LIM[k])return true;state.sheet={k:"upgrade",why:k};render();return false}
+const level=s=>s>=72?"hi":s>=55?"ok":s>=38?"mid":"lo";
+const LVC={hi:"#1aa37a",ok:"#0e8a8c",mid:"#f0a91f",lo:"#d8453a"};
+const curOf=j=>CUR[j.country||"TN"]||"";
+function gapWords(j,ptx,miss){const txt=(j.title+"\n"+j.descr),out=[],seen=new Set();
+ const loc=nrm((j.city||"")+" "+cName(j.country||"TN")+" tunisie tunisia france paris tunis");
+ const re=/(^|[^.!?\n]\s+|[(,:;]\s*)([A-Z][A-Za-z0-9+#.]{1,}|[a-z]+[A-Z][A-Za-z0-9]*)/g;let m;
+ while((m=re.exec(txt))){const w=m[2].replace(/\.$/,"");const k=nrm(w);if(!seen.has(k)&&!STOP.has(k)&&!ptx.includes(k)&&!loc.includes(k)){seen.add(k);out.push(w)}}
+ if(out.length<3)miss.filter(w=>!seen.has(w)&&!STOP.has(w)&&w.length>3&&!loc.includes(w)).slice(0,3).forEach(w=>out.push(w));
+ return out.slice(0,6)}
+function match(j,u){
+ const ptx=nrm(profText(u)),pt=new Set(toks(profText(u))),tt=toks(j.title),all=toks(j.title+" "+j.descr);
+ const kw=tt.concat(all.filter(w=>!tt.includes(w))).slice(0,30);
+ const hits=kw.filter(w=>pt.has(w)),miss=kw.filter(w=>!pt.has(w));
+ const sk=kw.length?Math.min(1,hits.length/Math.min(kw.length,8)):.5;
+ const ti=tt.length?tt.filter(w=>pt.has(w)).length/tt.length:.5;
+ const sameC=(j.country||"TN")===(u.country||"TN"),sameCity=sameC&&nrm(j.city)===nrm(u.city);
+ const loc=sameCity?12:j.remote?10:sameC?7:3;
+ const av=u.avail==="a1"?8:u.avail==="a2"?5:(["Stage","PFE","CIVP","Karama"].includes(j.contract)?8:4);
+ const salOk=u.salary&&j.max_salary?(j.max_salary>=u.salary?10:j.max_salary>=u.salary*.85?6:2):6;
+ let sc=Math.round(sk*55+ti*15+loc+av+salOk);sc=Math.max(3,Math.min(97,sc));
+ const jt=nrm(j.title+" "+j.descr),skm=(u.skills||[]).filter(s=>s.trim()&&jt.includes(nrm(s.trim())));
+ const good=[],bad=[];
+ if(skm.length)good.push(fmtT("sg_skills",{s:skm.slice(0,4).join(", ")}));
+ if(sameCity)good.push(t("sg_city"));else if(j.remote)good.push(t("sg_remote"));
+ if(u.salary&&j.max_salary&&j.max_salary>=u.salary)good.push(t("sg_salary"));
+ if(u.avail==="a1")good.push(t("sg_avail"));
+ if(!(u.skills||[]).length&&!u.exp)bad.push(t("gp_empty"));
+ const gw=gapWords(j,ptx,miss);if(gw.length)bad.push(fmtT("gp_kw",{s:gw.join(", ")}));
+ if(u.salary&&j.max_salary&&j.max_salary<u.salary)bad.push(t("gp_sal"));
+ if(!sameCity&&!j.remote)bad.push(t("gp_city"));
+ return{score:sc,lv:level(sc),good,bad,skm,hits,miss:gapWords(j,ptx,miss),ptx}}
+const mcache=new Map();
+function mm(j){const u=state.me,k=j.id+"|"+(u.skills||[]).join(",")+u.title+u.exp+u.about+u.edu+u.city+u.country+u.salary+u.avail;let r=mcache.get(k);if(!r){r=match(j,u);mcache.set(k,r)}return r}
+/* Documents : uniquement des faits du profil */
+const todayL=()=>new Date().toLocaleDateString(state.lang==="ar"?"ar-TN":state.lang==="en"?"en-GB":state.lang+"-"+(state.lang==="pt"?"PT":state.lang.toUpperCase()),{day:"numeric",month:"long",year:"numeric"});
+const cName=c=>{try{return new Intl.DisplayNames([state.lang],{type:"region"}).of(c)||c}catch(e){return c}};
+const linesOf=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
+function cvText(j){const u=state.me,m=mm(j),jt=new Set(toks(j.title+" "+j.descr));
+ const rel=l=>toks(l).filter(w=>jt.has(w)).length;
+ const ex=linesOf(u.exp).map((l,i)=>[l,i]).sort((a,b)=>rel(b[0])-rel(a[0])||a[1]-b[1]).map(x=>x[0]);
+ const sk=(u.skills||[]).filter(Boolean),sm=sk.filter(s=>m.skm.includes(s)),so=sk.filter(s=>!m.skm.includes(s));
+ const L=[];L.push(u.name.toUpperCase());
+ L.push([u.title,[u.city,cName(u.country||"TN")].filter(Boolean).join(", ")].filter(Boolean).join(" · "));
+ if(state.email)L.push(t("contact")+" : "+state.email);
+ L.push(t("offerFor")+" : "+j.title+" — "+coName(j));
+ if(u.about)L.push("","== "+t("about")+" ==",u.about);
+ if(sk.length)L.push("","== "+t("skills")+" ==",sm.concat(so).join(" · "));
+ if(ex.length)L.push("","== "+t("exp")+" ==",...ex.map(x=>"• "+x));
+ const ed=linesOf(u.edu);if(ed.length)L.push("","== "+t("edu")+" ==",...ed.map(x=>"• "+x));
+ L.push("","== "+t("availIs")+" ==",t(u.avail));
+ return L.join("\n")}
+function letterText(j){const u=state.me,m=mm(j),co=coName(j),ex=linesOf(u.exp).slice(0,2),lg=["fr","ar","en"].includes(state.lang)?state.lang:"en";
+ const av={fr:{a1:"disponible rapidement",a2:"actuellement en poste",a3:"étudiant(e)"},ar:{a1:"متاح في أقرب وقت",a2:"على رأس عمل حاليا",a3:"طالب"},en:{a1:"available soon",a2:"currently employed",a3:"a student"}}[lg][u.avail]||"";
+ const sk=m.skm.slice(0,5).join(", ");const c=u.city;
+ if(lg==="fr")return [`${c?c+", le ":"Le "}${todayL()}`,"",`Objet : candidature au poste de ${j.title}`,"","Madame, Monsieur,","",
+  `Je vous adresse ma candidature pour le poste de ${j.title} au sein de ${co}.`,"",
+  `${u.title?`Actuellement ${u.title}${c?" à "+c:""}`:"Je me permets de vous écrire"}${sk?`, je dispose de compétences en ${sk}, qui correspondent aux besoins de votre offre.`:"."}`,
+  ...(ex.length?["","Mon parcours : "+ex.join(" ; ")+"."]:[]),...(u.about?["",u.about]:[]),"",`Je suis ${av}.`,"",
+  "Je reste à votre disposition pour un entretien et vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.","",u.name].join("\n");
+ if(lg==="ar")return [`${c?c+"، ":""}${todayL()}`,"",`الموضوع: ترشح لمنصب ${j.title}`,"","السيدات والسادة،","",`أتقدم بترشحي لمنصب ${j.title} لدى ${co}.`,"",
+  `${u.title?`أعمل حاليا بصفة ${u.title}${c?" في "+c:""}`:"أكتب إليكم لهذا الغرض"}${sk?`، ولدي مهارات في ${sk} تتوافق مع متطلبات عرضكم.`:"."}`,
+  ...(ex.length?["","مساري: "+ex.join(" ؛ ")+"."]:[]),...(u.about?["",u.about]:[]),"",`أنا ${av}.`,"","أبقى رهن إشارتكم لإجراء مقابلة، وتفضلوا بقبول فائق الاحترام والتقدير.","",u.name].join("\n");
+ return [`${c?c+", ":""}${todayL()}`,"",`Subject: application for ${j.title}`,"","Dear Sir or Madam,","",`I am applying for the position of ${j.title} at ${co}.`,"",
+  `${u.title?`I currently work as ${u.title}${c?" in "+c:""}`:"I am writing to you"}${sk?`, with skills in ${sk} that match the needs of your offer.`:"."}`,
+  ...(ex.length?["","My background: "+ex.join("; ")+"."]:[]),...(u.about?["",u.about]:[]),"",`I am ${av}.`,"","I remain available for an interview. Yours faithfully,","",u.name].join("\n")}
+/* Suggestions de réseau (local et international) */
+function suggest(scope){
+ const me=state.me,mine=new Set((me.skills||[]).map(nrm)),mt=new Set(toks(profText(me))),ent=me.type==="freelance"||me.type==="entrepreneur",out=[];
+ state.profiles.forEach(p=>{if(p.id===state.uid||!p.name)return;
+  const tn=(p.country||"TN")==="TN";if(scope==="tn"&&!tn)return;if(scope==="world"&&tn)return;
+  const c=connWith(p.id);if(c&&c.status==="accepted")return;
+  const R=[];let sc=5;const sameCity=nrm(p.city)===nrm(me.city)&&(p.country||"TN")===(me.country||"TN");
+  if(p.type==="recruiter"){
+   const js=state.jobs.filter(j=>j.owner===p.id),good=js.filter(j=>mm(j).score>=55);
+   if(good.length){sc=60+Math.max(...good.map(j=>mm(j).score))/2;R.push(fmtT("r_recruit",{n:good.length}))}
+   else if(ent){sc=32;R.push(t("r_client"))}
+   else{sc=8;R.push(t("r_open"))}
+  }else{
+   const ps=(p.skills||[]).map(nrm),shared=(p.skills||[]).filter(s=>mine.has(nrm(s))),comp=(p.skills||[]).filter(s=>!mine.has(nrm(s)));
+   if(ent&&comp.length){sc=50+comp.length*7+shared.length*3+(p.type==="entrepreneur"||p.type==="freelance"?10:0);R.push(fmtT("r_partner",{s:comp.slice(0,3).join(", ")}))}
+   else if(shared.length&&(p.skills||[]).length>(me.skills||[]).length){sc=45+shared.length*8;R.push(t("r_mentor"))}
+   else if(shared.length){sc=38+shared.length*6;R.push(fmtT("r_peer",{s:shared.slice(0,3).join(", ")}))}
+   else{sc=10+(tn?0:6);R.push(t("r_open"))}
+  }
+  if(sameCity){sc+=6;R.push(t("r_city"))}
+  out.push({p,sc,R:R.slice(0,2)})});
+ return out.sort((a,b)=>b.sc-a.sc)}
+
+/* ---------- Écrans (design clair) ---------- */
+/* ---------- Suivi des candidatures, plan d'action, communautés, confiance ---------- */
+const STS=["sent","seen","short","rejected","hired"];
+const stChip=a=>{const k=a.status||"sent";return `<span class="chip st-${k}">${esc(t("st_"+k))}</span>`};
+function respInfo(o){const r=state.rstats[o];if(!r||r.total<3)return null;const p=Math.round(r.answered/r.total*100),h=r.avg_hours;
+ const n=Math.max(1,Math.round((h||0)/24)),d=h==null?"":h<24?t("d_lt1"):n===1?t("d_1"):fmtT("d_n",{n});return{p,d}}
+const respText=o=>{const r=respInfo(o);return r?fmtT(r.d?"resp_fmt":"resp_fmt2",{p:r.p,d:r.d}):t("resp_new")};
+const respLine=o=>{const r=respInfo(o);return `<span class="chip ${r&&r.p>=60?"ok":"line"}">${esc(respText(o))}</span>`};
+const SCAM=/frais (de |d')?(dossier|inscription|visa|traitement|formation)|payer (pour|d'avance|avant)|paiement (avant|anticipe|d'avance)|par mandat|western|moneygram|\bcaution\b|contrat garanti|visa garanti|sans entretien|gain facile|argent facile|gagner \d+.{0,25}par (jour|semaine)|\brib\b|\biban\b|carte bancaire|registration fee|processing fee|application fee|pay (a |an )?(fee|deposit)|upfront|wire transfer|guaranteed (visa|contract|job)|easy money|no interview|bank card/;
+const SCAM_AR=/رسوم|دفع مسبق|حوالة|ويسترن|ربح سريع|تأشيرة مضمونة|عقد مضمون|بدون مقابلة/;
+const scamFlag=j=>{const x=(j.title||"")+" "+(j.descr||"");return SCAM.test(nrm(x))||SCAM_AR.test(x.toLowerCase())};
+const isFlag=j=>state.flagged.includes(j.id)||state.flagged.includes(j.owner);
+function trustBlock(j,o){const w=scamFlag(j)||isFlag(j);
+ return (w?`<div class="warn" role="alert"><b>${esc(t(isFlag(j)?"flaggedT":"scamT"))}</b><p>${esc(t("scamTxt"))}</p></div>`:"")
+ +`<div class="trust ${o&&o.verified?"ok":""}">${esc(t(o&&o.verified?"tr_ver":"tr_unver"))}</div>`}
+function planFor(j){const u=state.me,base=match(j,u),TG=85;
+ if(base.score>=TG)return{base:base.score,pot:base.score,ok:true,steps:[],extra:[]};
+ const st=[];base.miss.slice(0,8).forEach(w=>{const u2=Object.assign({},u,{skills:(u.skills||[]).concat([w])});const g=match(j,u2).score-base.score;if(g>0)st.push({w,g})});
+ st.sort((a,b)=>b.g-a.g);const top=st.slice(0,3);
+ const pot=match(j,Object.assign({},u,{skills:(u.skills||[]).concat(top.map(x=>x.w))})).score;
+ const extra=[];if(!(u.skills||[]).length||!u.exp)extra.push("planProf");
+ if(u.salary&&j.max_salary&&j.max_salary<u.salary)extra.push("planSal");
+ const sameC=(j.country||"TN")===(u.country||"TN"),sameCity=sameC&&nrm(j.city)===nrm(u.city);
+ if(!sameCity&&!j.remote)extra.push("planCity");
+ return{base:base.score,pot,ok:false,steps:top,extra}}
+function planBlock(j){const pl=planFor(j),pro=isPro(state.me);
+ if(pl.ok)return `<div class="note">${esc(t("planOk"))}</div>`;
+ const rows=pl.steps.map(x=>fmtT("planAdd",{s:x.w,g:x.g})).concat(pl.extra.map(k=>t(k)));if(!rows.length)return"";
+ const shown=pro?rows:rows.slice(0,1),locked=!pro&&rows.length>1;
+ return `<div class="plan-box"><b>${esc(fmtT("planT",{n:85}))}</b>${pl.pot>pl.base?`<div class="muted">${esc(fmtT("planNow",{a:pl.base,b:pl.pot}))}</div>`:""}
+ <ul class="chk">${shown.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><div class="muted" style="font-size:13px">${esc(t("planNote"))}</div>
+ ${locked?`<button class="card lock" data-act="upgrade"><b>${esc(t("planLock"))}</b><span class="btn small">${esc(t("upBtn"))}</span></button>`:""}</div>`}
+const memOf=id=>state.cmem.filter(m=>m.community_id===id);
+const inComm=id=>state.cmem.some(m=>m.community_id===id&&m.user_id===state.uid);
+function commSuggest(){const u=state.me,c=nrm(u.city),ed=nrm(u.edu),tx=nrm(profText(u));
+ return state.comms.filter(x=>!inComm(x.id)).filter(x=>{const n=nrm(x.name);
+  return(x.kind==="city"&&n===c)||(x.kind==="school"&&n.split(/\s+/).filter(w=>w.length>3).some(w=>ed.includes(w)))||(x.kind==="trade"&&toks(x.name).some(w=>w.length>3&&tx.includes(w)))})}
+function commCard(x){const n=memOf(x.id).length,im=inComm(x.id);
+ return `<div class="card flat"><div class="row"><button class="grow main" style="text-align:start" data-act="openComm" data-id="${x.id}"><b>${esc(x.name)}</b><br><span class="muted">${esc(t("k_"+x.kind))} · ${esc(fmtT("members",{n}))}</span></button>
+ ${im?`<span class="chip ok">${esc(t("joined"))}</span><button class="btn small ghost" data-act="leave" data-id="${x.id}">${esc(t("leave"))}</button>`:`<button class="btn small" data-act="join" data-id="${x.id}">${esc(t("join"))}</button>`}</div></div>`}
+function commTab(){const u=state.me,sg=commSuggest(),rest=state.comms.filter(x=>!sg.includes(x)),mk=u.city&&!state.comms.some(x=>x.kind==="city"&&nrm(x.name)===nrm(u.city));
+ return `<p class="muted">${esc(t("commSub"))}</p>
+ ${sg.length?`<div class="sec"><h2>${esc(t("commFor"))}</h2></div>${sg.map(x=>commCard(x)).join("")}`:""}
+ ${mk?`<button class="card lock" data-act="mkCity"><b>${esc(fmtT("commMkCity",{c:cityL(u.city)}))}</b></button>`:""}
+ <div class="sec"><h2>${esc(t("commAll"))}</h2></div>${rest.map(x=>commCard(x)).join("")||(sg.length?"":`<div class="empty">${esc(t("commEmpty"))}</div>`)}
+ <button class="btn block" data-act="newComm">${esc(t("commNew"))}</button>`}
+const PRICES=(CFG.pricing)||{pro:{TN:"12 DT",INT:"4 €"},year:{TN:"99 DT",INT:"39 €"},rec:{TN:"49 DT",INT:"15 €"}};
+const money=k=>PRICES[k][(state.me&&state.me.country||"TN")==="TN"?"TN":"INT"];
+const countryOpts=sel=>COUNTRIES.map(c=>`<option value="${c}" ${(sel||"TN")===c?"selected":""}>${esc(cName(c))}</option>`).join("");
+const cityDl=`<datalist id="cityDl">${CITIES.map(c=>`<option value="${esc(c[0])}"></option>`).join("")}</datalist>`;
+const langSel=id=>`<select id="${id}" class="langsel" aria-label="${esc(t("lang"))}">${LANGS.map(l=>`<option value="${l[0]}" ${state.lang===l[0]?"selected":""}>${l[1]}</option>`).join("")}</select>`;
+const ring=s=>`<div class="ring" style="--p:${s};--c:${LVC[level(s)]}"><span>${s}%</span></div>`;
+const scopeBar=()=>`<div class="seg3">${["all","tn","world"].map(k=>`<button data-act="scope" data-v="${k}" aria-pressed="${state.scope===k}">${esc(t(k==="all"?"scopeAll":k==="tn"?"scopeTN":"scopeWorld"))}</button>`).join("")}</div>`;
+const inScope=c=>state.scope==="all"||(state.scope==="tn")===((c||"TN")==="TN");
+const salary2=j=>{if(!j.max_salary)return"";const c=curOf(j);const m=c&&c!=="DT"?t("month").replace(/DT|د\.ت/,c):t("month");return fmt(j.min_salary)+" – "+fmt(j.max_salary)+" "+m};
+const seekerLike=()=>state.me&&state.me.type!=="recruiter";
+function authView(){
+ const su=state.authMode==="signup",ty=state.aType,tp=["seeker","student","freelance","entrepreneur","recruiter"];
+ return `<div class="band"></div><div class="welcome"><div class="in">
+ <div class="brandbig"><div class="arch rouge" style="width:74px;height:88px">${starSvg("star")}</div><h1>Carthage<b>Pro</b></h1><p class="muted" style="font-size:15px">${esc(t("slogan"))}</p></div>
+ <div style="align-self:center">${langSel("langSel")}</div>
+ ${DEMO?`<div class="note">${esc(t("demoNote"))}</div><button class="btn rouge block" data-act="demo">${esc(t("demoBtn"))}</button>`:""}
+ ${su?`<div class="field"><label for="aName">${esc(t("name"))}</label><input id="aName" autocomplete="name"></div>
+ <div class="field"><label>${esc(t("type"))}</label><div class="seg wrap">${tp.map(x=>`<button type="button" data-act="atype" data-v="${x}" aria-pressed="${ty===x}">${esc(t(x))}</button>`).join("")}</div></div>
+ ${ty==="recruiter"?`<div class="field"><label for="aCo">${esc(t("company"))}</label><input id="aCo"></div><div class="field"><label for="aSect">${esc(t("sector"))}</label><select id="aSect">${Object.keys(SECT).map(k=>`<option value="${k}">${esc(sectL(k))}</option>`).join("")}</select></div>`:""}
+ <div class="grid2"><div class="field"><label for="aCountry">${esc(t("country"))}</label><select id="aCountry">${countryOpts("TN")}</select></div>
+ <div class="field"><label for="aCity">${esc(t("city"))}</label><input id="aCity" list="cityDl" value="Tunis" autocomplete="off"></div></div>${cityDl}`:""}
+ <div class="field"><label for="aMail">${esc(t("email"))}</label><input id="aMail" type="email" autocomplete="email" inputmode="email"></div>
+ <div class="field"><label for="aPass">${esc(t("password"))}</label><input id="aPass" type="password" autocomplete="${su?"new-password":"current-password"}"></div>
+ ${state.authMsg?`<p class="note" role="alert">${esc(state.authMsg)}</p>`:""}
+ <button class="btn block" data-act="auth" ${state.busy?"disabled":""}>${esc(su?t("signup"):t("login"))}</button>
+ <button class="btn ghost block" data-act="authMode">${esc(su?t("toLogin"):t("toSignup"))}</button></div></div>`;
+}
+function shell(){
+ const inc=state.conns.filter(c=>c.addressee===state.uid&&c.status==="pending").length;
+ const nb=(k,v,lab,extra)=>`<button data-act="view" data-v="${k}" ${state.view===k?'aria-current="page"':""}>${ic(v)}<span>${esc(lab)}</span>${extra||""}</button>`;
+ return `<div class="band"></div><header class="top"><div class="logo">${starSvg("star")}<span>Carthage<b>Pro</b></span>${isPro(state.me)?`<span class="chip new" style="margin-inline-start:4px">${esc(t("proBadge"))}</span>`:""}</div>
+ <div class="grow"></div>${langSel("langSel")}
+ <button data-act="view" data-v="profile" aria-label="${esc(t("profile"))}">${avatar(state.me&&state.me.name,"sm")}</button></header>
+ <main id="main">${state.loading?`<div class="empty">${esc(t("loading"))}</div>`:view()}</main>
+ <nav>${nb("feed","feed",t("home"))}${nb("jobs","jobs",t("jobs"))}
+ <button class="plus" data-act="newPostSheet" aria-label="${esc(t("postT"))}"><span class="fab">${ic("plus")}</span></button>
+ ${nb("network","network",t("network"),inc?`<span class="badge-n">${inc}</span>`:"")}${nb("msgs","msgs",t("msgs"))}</nav>${sheet()}`;
+}
+function miniJob(j){const m=seekerLike()?mm(j):null;return `<button class="mini" data-act="openJob" data-id="${j.id}"><b>${esc(j.title)}</b><span class="muted">${esc(coName(j))}</span><span class="muted">${ic("pin")} ${esc(cityL(j.city))}${(j.country||"TN")!=="TN"?", "+esc(cName(j.country)):""}</span>${m?`<span class="mini-ring" style="--c:${LVC[m.lv]}"><i class="dot"></i>${m.score}%</span>`:""}${j.max_salary?`<span class="salary" dir="ltr">${esc(salary2(j))}</span>`:`<span class="chip ${AIDE.includes(j.contract)?"aide":""}" style="align-self:flex-start">${esc(conL(j.contract))}</span>`}</button>`}
+function sugCard(x,mini){const p=x.p,nm=p.company_name||p.name,c=connWith(p.id),lab=c?(c.status==="accepted"?t("connected"):t("pending")):t("connect");
+ return `<article class="${mini?"mini sug":"card"}"><div class="row top">${avatar(nm,mini?"sm":"")}<div class="grow"><h3>${esc(nm)} ${vfIf(p)}</h3><div class="muted">${esc(p.title||t(p.type))}</div><div class="muted">${ic("pin")} ${esc(cityL(p.city))}${(p.country||"TN")!=="TN"?", "+esc(cName(p.country)):""}</div></div></div>
+ <div class="chips">${x.R.map(r=>`<span class="chip aide">${esc(r)}</span>`).join("")}</div>
+ <div class="row"><button class="btn small ${c?"ghost":""}" data-act="connect" data-id="${p.id}" ${c?"disabled":""}>${esc(lab)}</button>${mini?"":`<button class="btn small ghost" data-act="chatWith" data-id="${p.id}">${esc(t("write2"))}</button>`}</div></article>`}
+function postCard(p){
+ const a=P(p.author)||{name:"—",type:"seeker"},nm=a.company_name||a.name,n=state.likes.filter(l=>l.post_id===p.id).length,me=state.likes.some(l=>l.post_id===p.id&&l.user_id===state.uid),c=state.comments.filter(x=>x.post_id===p.id).length;
+ return `<article class="card"><div class="row top">${avatar(nm,"")}<div class="grow"><h3>${esc(nm)} ${vfIf(a)}</h3><div class="muted">${esc(a.title||t(a.type||"seeker"))} · ${esc(dateL(p.created_at))}</div></div></div>
+ <p style="white-space:pre-wrap">${esc(p.body)}</p>
+ <div class="row"><button class="chip ${me?"free":"line"}" style="min-height:36px;padding:4px 14px" data-act="like" data-id="${p.id}" aria-pressed="${me}">${ic("heart")} ${esc(t("like"))} · ${n}</button>
+ <button class="chip line" style="min-height:36px;padding:4px 14px" data-act="openComments" data-id="${p.id}">${ic("cmt")} ${c}</button></div></article>`;
+}
+function feed(){
+ const u=state.me,s=strength(),f=(u.name||"").split(" ")[0],sk=seekerLike();
+ const jobs=state.jobs.filter(j=>inScope(j.country)||state.scope==="all").slice().sort((a,b)=>sk?mm(b).score-mm(a).score:(b.city===u.city)-(a.city===u.city)).slice(0,6);
+ const sg=sk||u.type==="recruiter"?suggest(state.scope).slice(0,isPro(u)?6:3):[];
+ return `${DEMO?`<div class="note">${esc(t("demoNote"))}</div>`:""}
+ <section class="card hero flat"><div class="main"><div class="row">${avatar(u.name,"")}<div class="grow"><h2>${esc(t("hello"))}, ${esc(f)}</h2><div class="muted">${esc(u.title||t(u.type))} · ${esc(cityL(u.city))}, ${esc(cName(u.country||"TN"))}</div></div></div>
+ ${s.next?`<div><div class="row sp muted"><span>${esc(t("strength"))}</span><b>${s.pct}%</b></div><div class="meter"><i style="width:${s.pct}%"></i></div><div class="muted" style="margin-top:6px">${esc(t(s.next))}</div></div><button class="btn small" style="align-self:flex-start" data-act="view" data-v="profile">${esc(t("complete"))}</button>`:`<div class="muted">${esc(t("strong"))}</div>`}</div></section>
+ ${scopeBar()}
+ ${jobs.length?`<div class="sec"><h2>${esc(t("forYou"))}</h2><button data-act="view" data-v="jobs">${esc(t("seeAll"))}</button></div><div class="hscroll">${jobs.map(miniJob).join("")}</div>`:""}
+ ${sg.length?`<div class="sec"><h2>${esc(t("sugT"))}</h2><button data-act="view" data-v="network">${esc(t("seeAll"))}</button></div><div class="hscroll">${sg.map(x=>sugCard(x,true)).join("")}</div>`:""}
+ <div class="sec"><h2>${esc(t("feed"))}</h2></div>
+ ${state.posts.length?state.posts.map(postCard).join(""):`<div class="empty">${esc(t("noPosts"))}</div>`}`;
+}
+function filterJobs(){
+ const q=state.q.trim().toLowerCase(),sk=seekerLike();
+ const l=state.jobs.filter(j=>inScope(j.country)&&(!state.fCity||j.city===state.fCity)&&(!state.fSect||j.sector===state.fSect)&&(!state.fCon||j.contract===state.fCon)&&(!q||(j.title+" "+coName(j)+" "+j.descr).toLowerCase().includes(q)));
+ return sk?l.sort((a,b)=>mm(b).score-mm(a).score):l}
+function jobCard(j){
+ const o=P(j.owner),done=applied(j),sv=state.saved.includes(j.id),mine=j.owner===state.uid,m=seekerLike()&&!mine?mm(j):null;
+ return `<article class="card flat"><button class="main" data-act="openJob" data-id="${j.id}">
+ <div class="row top">${avatar(coName(j),"")}<div class="grow"><h3>${esc(j.title)}</h3><div class="muted">${esc(coName(j))} ${vfIf(o)}</div><div class="muted">${ic("pin")} ${esc(cityL(j.city))}${(j.country||"TN")!=="TN"?", "+esc(cName(j.country)):""}</div></div>${m?ring(m.score):""}</div>
+ <div class="chips"><span class="chip ${AIDE.includes(j.contract)?"aide":""}">${esc(conL(j.contract))}</span><span class="chip line">${esc(sectL(j.sector))}</span>${j.remote?`<span class="chip free">${esc(t("remote"))}</span>`:""}${isNew(j)?`<span class="chip new">${esc(t("newTag"))}</span>`:""}${scamFlag(j)||isFlag(j)?`<span class="chip warnc">${esc(t("caution"))}</span>`:""}</div>
+ ${j.max_salary?`<div class="salary" dir="ltr">${esc(salary2(j))}</div>`:""}</button>
+ <div class="acts">${mine?`<span class="chip ok">${esc(t("myJob"))}</span>`:`<button class="btn small ${done?"ghost":""}" data-act="apply" data-id="${j.id}" ${done?"disabled":""}>${esc(done?t("applied"):t("apply"))}</button>`}
+ <span class="grow"></span><button class="ib" data-act="save" data-id="${j.id}" aria-pressed="${sv}" aria-label="${esc(t("save"))}">${ic("bookmark")}</button></div></article>`;
+}
+function jobCards(){
+ const l=filterJobs();
+ return `<div class="muted">${l.length} ${esc(t("results"))}</div>`+(l.length?l.map(jobCard).join(""):`<div class="empty">${esc(state.jobs.length?t("none"):t("noJobs"))}</div>`);
+}
+function jobsView(){
+ const sel=(id,v,all,arr,lab)=>`<select id="${id}" class="${v?"on":""}" aria-label="${esc(all)}"><option value="">${esc(all)}</option>${arr.map(a=>`<option value="${a}" ${v===a?"selected":""}>${esc(lab(a))}</option>`).join("")}</select>`;
+ return `<div class="search"><div class="box">${ic("search")}<input id="q" type="search" placeholder="${esc(t("search"))}" value="${esc(state.q)}" aria-label="${esc(t("search"))}"></div>
+ ${scopeBar()}<div class="pills">${sel("fSect",state.fSect,t("allSectors"),Object.keys(SECT),sectL)}${sel("fCon",state.fCon,t("allContracts"),CONTRACTS,conL)}</div></div>
+ ${isRec()?`<button class="btn rouge block" data-act="newJob">${ic("plus")} ${esc(t("publishJob"))}</button>`:""}
+ <div id="jobsList" style="display:flex;flex-direction:column;gap:12px">${jobCards()}</div>`;
+}
+const connWith=id=>state.conns.find(c=>(c.requester===state.uid&&c.addressee===id)||(c.addressee===state.uid&&c.requester===id));
+function peopleCards(){
+ const q=state.pq.trim().toLowerCase();if(!q)return"";
+ const l=state.profiles.filter(p=>p.id!==state.uid&&p.name&&p.type!=="recruiter"&&inScope(p.country)&&(!q||(p.title+" "+(p.skills||[]).join(" ")+" "+p.name).toLowerCase().includes(q)));
+ return `<div class="muted">${l.length} ${esc(t("results"))}</div>`+(l.length?l.map(p=>sugCard({p,R:[]})).join(""):`<div class="empty">${esc(t("none"))}</div>`);
+}
+const companies=()=>state.profiles.filter(p=>p.type==="recruiter"&&p.company_name&&inScope(p.country));
+function cosCards(){
+ const l=companies();
+ return l.length?l.map(c=>{const n=state.jobs.filter(j=>j.owner===c.id).length;return `<button class="card" style="text-align:start" data-act="openCo" data-id="${c.id}"><div class="row">${avatar(c.company_name,"")}<div class="grow"><h3>${esc(c.company_name)} ${vfIf(c)}</h3><div class="muted">${esc(sectL(c.sector))} · ${esc(cityL(c.city))}, ${esc(cName(c.country||"TN"))}</div></div><span class="chip ${n?"free":"line"}">${n} ${esc(t("jobsN"))}</span></div></button>`}).join(""):`<div class="empty">${esc(t("none"))}</div>`;
+}
+function netView(){
+ const inc=state.conns.filter(c=>c.addressee===state.uid&&c.status==="pending");
+ const pro=isPro(state.me),sg=suggest(state.scope),shown=sg.slice(0,pro?12:3);
+ return `<div class="tabs"><button data-act="tab" data-v="people" aria-pressed="${state.tab==="people"}">${esc(t("people"))}</button><button data-act="tab" data-v="cos" aria-pressed="${state.tab==="cos"}">${esc(t("cos"))}</button><button data-act="tab" data-v="comm" aria-pressed="${state.tab==="comm"}">${esc(t("commT"))}</button></div>${state.tab==="comm"?"":scopeBar()}
+ ${state.tab==="people"?`${inc.length?`<div class="card"><h2>${esc(t("requests"))}</h2>${inc.map(c=>{const p=P(c.requester)||{name:"—"};return `<div class="row">${avatar(p.name,"sm")}<span class="grow"><b>${esc(p.name)}</b><br><span class="muted">${esc(p.title||"")}</span></span><button class="btn small" data-act="accept" data-id="${c.id}">${esc(t("accept"))}</button></div>`}).join("")}</div>`:""}
+ <div class="sec"><h2>${esc(t("sugT"))}</h2></div><p class="muted">${esc(t("sugSub"))}</p>
+ ${shown.map(x=>sugCard(x)).join("")||`<div class="empty">${esc(t("none"))}</div>`}
+ ${!pro&&sg.length>3?`<button class="card lock" data-act="upgrade"><b>${esc(t("moreSug"))} (${sg.length-3})</b><span class="muted">${esc(t("lockFull"))}</span><span class="btn small">${esc(t("upBtn"))}</span></button>`:""}
+ <div class="search"><div class="box">${ic("search")}<input id="pq" type="search" placeholder="${esc(t("findPeople"))}" value="${esc(state.pq)}" aria-label="${esc(t("findPeople"))}"></div></div>
+ <div id="peopleList" style="display:flex;flex-direction:column;gap:12px">${peopleCards()}</div>`
+ :state.tab==="comm"?`<div style="display:flex;flex-direction:column;gap:12px">${commTab()}</div>`:`<div style="display:flex;flex-direction:column;gap:12px">${cosCards()}</div>`}`;
+}
+function convs(){
+ const m={};state.msgs.forEach(x=>{const o=x.sender===state.uid?x.receiver:x.sender;m[o]=x});
+ return Object.keys(m).map(o=>({id:o,last:m[o]})).sort((a,b)=>a.last.created_at<b.last.created_at?1:-1);
+}
+function msgsView(){
+ const c=convs();
+ return c.length?c.map(x=>{const p=P(x.id)||{name:"—"},nm=p.company_name||p.name;return `<button class="card" style="text-align:start" data-act="openChat" data-id="${x.id}"><div class="row">${avatar(nm,"")}<div class="grow"><h3>${esc(nm)}</h3><div class="muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${x.last.sender===state.uid?esc(t("you"))+" : ":""}${esc(x.last.body)}</div></div><span class="muted">${esc(dateL(x.last.created_at))}</span></div></button>`}).join(""):`<div class="empty">${esc(t("noChats"))}</div>`;
+}
+function lines(s){const a=linesOf(s);return a.length?`<ul style="padding-inline-start:18px">${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:`<span class="muted">${esc(t("noExp"))}</span>`}
+function usageRow(k,lab){const n=used(k),m=LIM[k],p=Math.min(100,Math.round(n/m*100));return `<div><div class="row sp muted"><span>${esc(lab)}</span><b>${isPro(state.me)?n+" / ∞":n+" / "+m}</b></div><div class="meter"><i style="width:${isPro(state.me)?8:p}%;${!isPro(state.me)&&p>=100?"background:var(--rouge)":""}"></i></div></div>`}
+function profView(){
+ const u=state.me,s=strength(),apps=state.apps.filter(a=>a.applicant===state.uid).map(a=>{const j=state.jobs.find(x=>x.id===a.job_id);return j?Object.assign({},j,{_a:a}):null}).filter(Boolean),sv=state.saved.map(id=>state.jobs.find(j=>j.id===id)).filter(Boolean),pro=isPro(u);
+ return `<section class="card flat"><div style="height:64px;background:var(--carpet) repeat;background-size:auto 32px"></div><div class="main" style="padding-top:0"><div style="margin-top:-50px">${avatar(u.name,"lg")}</div>
+ <div><h1>${esc(u.name||"—")} ${vfIf(u)} ${pro?`<span class="chip new">${esc(t("proBadge"))}</span>`:""}</h1><div class="muted">${esc(u.title||t(u.type))} · ${esc(cityL(u.city))}, ${esc(cName(u.country||"TN"))}</div></div>
+ <div class="chips"><span class="chip ok">${esc(t(u.avail))}</span><span class="chip">${esc(t(u.goal))}</span>${u.salary?`<span class="chip free">${esc(fmt(u.salary))} ${esc(t("month"))}</span>`:""}</div>
+ <div class="row"><button class="btn small" data-act="editProfile">${esc(t("edit"))}</button><button class="btn small ghost" data-act="logout">${esc(t("logout"))}</button></div></div></section>
+ <section class="card"><div class="row sp"><h2>${esc(pro?t("isPro"):t("planFree"))}</h2><button class="btn small ${pro?"ghost":""}" data-act="upgrade">${esc(t("upBtn"))}</button></div><div class="muted">${esc(t("usage"))}</div>
+ ${usageRow(u.type==="recruiter"?"jobs":"apps",u.type==="recruiter"?t("q_jobs"):t("q_apps"))}${usageRow("conn",t("q_conn"))}${u.type==="recruiter"?"":usageRow("docs",t("q_docs"))}</section>
+ ${s.next?`<section class="card"><div class="row sp"><b>${esc(t("strength"))}</b><b>${s.pct}%</b></div><div class="meter"><i style="width:${s.pct}%"></i></div><span class="muted">${esc(t(s.next))}</span></section>`:""}
+ ${u.type==="recruiter"?`<section class="card"><h2>${esc(u.company_name||t("company"))} ${vfIf(u)}</h2>${u.verified?"":`<span class="muted">${esc(t("unverified"))}</span>`}${u.verified?"":state.ver?`<div class="note">${esc(t("verPending"))}</div>`:`<button class="btn small block" data-act="verif">${esc(t("verReq"))}</button>`}</section>`:""}
+ <section class="card"><h2>${esc(t("about"))}</h2><p style="white-space:pre-wrap">${u.about?esc(u.about):`<span class="muted">${esc(t("noExp"))}</span>`}</p></section>
+ <section class="card"><h2>${esc(t("skills"))}</h2>${(u.skills||[]).length?`<div class="chips">${u.skills.map(k=>`<span class="chip">${esc(k)}</span>`).join("")}</div>`:`<span class="muted">${esc(t("noExp"))}</span>`}</section>
+ <section class="card"><h2>${esc(t("exp"))}</h2>${lines(u.exp)}</section>
+ <section class="card"><h2>${esc(t("edu"))}</h2>${lines(u.edu)}</section>
+ <section class="card"><h2>${esc(t("myApps"))}</h2>${apps.length?apps.map(j=>`<button class="row sp" style="text-align:start" data-act="openJob" data-id="${j.id}"><span><b>${esc(j.title)}</b> <span class="muted">· ${esc(coName(j))}</span></span>${stChip(j._a)}</button>`).join(""):`<span class="muted">${esc(t("noApps"))}</span>`}</section>
+ <section class="card"><h2>${esc(t("savedJobs"))}</h2>${sv.length?sv.map(j=>`<button style="text-align:start" data-act="openJob" data-id="${j.id}"><b>${esc(j.title)}</b> <span class="muted">· ${esc(coName(j))}</span></button>`).join(""):`<span class="muted">${esc(t("emptySaved"))}</span>`}</section>`;
+}
+function matchBlock(j){
+ const m=mm(j),pro=isPro(state.me),adv={hi:"adviceHi",ok:"adviceOk",mid:"adviceMid",lo:"adviceLo"}[m.lv];
+ const gd=pro?m.good:m.good.slice(0,2),bd=pro?m.bad:m.bad.slice(0,1),locked=!pro&&(m.good.length>2||m.bad.length>1);
+ return `<div class="match">${ring(m.score)}<div><b style="color:${LVC[m.lv]}">${esc(t("v_"+m.lv))}</b><div class="muted">${esc(t("matchT"))}</div></div></div>
+ <p>${esc(t(adv))}</p>
+ ${gd.length?`<div><b>${esc(t("strengths"))}</b><ul class="chk">${gd.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
+ ${bd.length?`<div><b>${esc(t("gaps"))}</b><ul class="chk gap">${bd.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
+ ${locked?`<button class="card lock" data-act="upgrade"><b>${esc(t("seeMore"))}</b><span class="muted">${esc(t("lockFull"))}</span></button>`:""}
+ ${planBlock(j)}
+ <div class="muted" style="font-size:13px">${esc(t("estim"))}</div>`;
+}
+function planCard(name,price,per,feats,hl){return `<div class="plan ${hl?"hl":""}"><div class="row sp"><b>${esc(name)}</b><span><b style="font-size:20px">${esc(price)}</b> <span class="muted">${esc(per)}</span></span></div><ul class="chk">${feats.map(f=>`<li>${esc(t(f))}</li>`).join("")}</ul></div>`}
+function sheet(){
+ const s=state.sheet;if(!s)return"";
+ if(s.k==="upgrade"){const rec=state.me.type==="recruiter";
+  return sheetWrap(t("upT"),`${s.why?`<p class="note">${esc(t("upSub"))} ${esc(t("q_"+s.why))} : ${used(s.why)} / ${LIM[s.why]}</p>`:""}
+  ${planCard(t("planFree"),"0","",["f_free1","f_free2","f_free3","f_free4"],false)}
+  ${planCard(rec?t("planRec"):t("planPro"),money(rec?"rec":"pro"),t("perMonth"),rec?["f_rec1","f_pro1","f_pro4"]:["f_pro1","f_pro2","f_pro3","f_pro4"],true)}
+  ${rec?"":`<div class="muted" style="text-align:center">${esc(money("year"))} ${esc(t("perYear"))}</div>`}
+  <button class="btn rouge block" data-act="${DEMO?"activate":"pay"}">${esc(DEMO?t("demoActivate"):t("payBtn"))}</button><div class="muted" style="text-align:center">${esc(t("payNote"))}</div>`);}
+ if(s.k==="doc"){const j=state.jobs.find(x=>x.id===s.id);if(!j)return"";const txt=s.kind==="cv"?cvText(j):letterText(j),m=mm(j);
+  return sheetWrap(t(s.kind==="cv"?"genCV":"genLetter"),`<div class="muted">${esc(j.title)} — ${esc(coName(j))}</div><div class="note">${esc(t("docsNote"))}</div>
+  <div class="doc" id="docText" contenteditable="true" dir="auto" role="textbox" aria-multiline="true">${esc(txt)}</div>
+  ${m.miss.length?`<div><b>${esc(t("missing"))}</b><div class="chips" style="margin-top:6px">${m.miss.slice(0,8).map(w=>`<span class="chip line">${esc(w)}</span>`).join("")}</div></div>`:""}
+  <div class="row"><button class="btn block" data-act="copyDoc">${esc(t("copy"))}</button><button class="btn ghost block" data-act="printDoc">${esc(t("print"))}</button></div>`);}
+ if(s.k==="job"){const j=state.jobs.find(x=>x.id===s.id);if(!j)return"";const done=applied(j),mine=j.owner===state.uid,o=P(j.owner),sk=seekerLike()&&!mine;
+  const aps=mine?state.apps.filter(a=>a.job_id===j.id):[];
+  return sheetWrap(j.title,`<div><h3>${esc(coName(j))} ${vfIf(o)}</h3><div class="muted">${ic("pin")} ${esc(cityL(j.city))}${(j.country||"TN")!=="TN"?", "+esc(cName(j.country)):""}</div></div>
+  <div class="chips"><span class="chip ${AIDE.includes(j.contract)?"aide":""}">${esc(conL(j.contract))}</span><span class="chip line">${esc(sectL(j.sector))}</span>${j.remote?`<span class="chip free">${esc(t("remote"))}</span>`:""}</div>
+  ${j.max_salary?`<div class="salary" dir="ltr">${esc(salary2(j))}</div>`:""}${trustBlock(j,o)}<div class="row" style="flex-wrap:wrap;gap:6px">${respLine(j.owner)}${done?stChip(state.apps.find(a=>a.job_id===j.id&&a.applicant===state.uid)):""}</div>${sk?matchBlock(j):""}<p style="white-space:pre-wrap">${esc(j.descr)}</p>
+  ${mine?`<div class="card"><h3>${esc(t("applicants"))} (${aps.length})</h3>${aps.length?aps.map(a=>{const p=P(a.applicant)||{name:"—"};return `<div class="row sp" style="flex-wrap:wrap"><span class="grow">${esc(p.name)} <span class="muted">${esc(p.title||"")}</span></span><select class="stsel" data-sel="status" data-id="${a.id}" aria-label="${esc(t("statusT"))}">${STS.map(k=>`<option value="${k}" ${(a.status||"sent")===k?"selected":""}>${esc(t("st_"+k))}</option>`).join("")}</select><button class="btn small ghost" data-act="chatWith" data-id="${a.applicant}">${esc(t("write2"))}</button></div>`}).join(""):`<span class="muted">${esc(t("noApplicants"))}</span>`}</div>`
+  :`<button class="btn block" data-act="apply" data-id="${j.id}" ${done?"disabled":""}>${esc(done?t("applied"):t("apply"))}</button>
+  ${sk?`<div class="grid2"><button class="btn ghost block" data-act="doc" data-kind="letter" data-id="${j.id}">${esc(t("genLetter"))}</button><button class="btn ghost block" data-act="doc" data-kind="cv" data-id="${j.id}">${esc(t("genCV"))}</button></div>`:""}
+  <button class="btn block ghost" data-act="chatWith" data-id="${j.owner}">${esc(t("msgCo"))}</button>
+  <button class="linkb" data-act="report" data-id="${j.id}" data-ty="job">${esc(t("reportBtn"))}</button>`}`);}
+ if(s.k==="comm"){const x=state.comms.find(c=>c.id===s.id);if(!x)return"";const ms=memOf(x.id).map(m=>P(m.user_id)).filter(Boolean),im=inComm(x.id);
+  return sheetWrap(x.name,`<div class="muted">${esc(t("k_"+x.kind))} · ${esc(fmtT("members",{n:ms.length}))}</div>
+  <button class="btn block ${im?"ghost":""}" data-act="${im?"leave":"join"}" data-id="${x.id}">${esc(t(im?"leave":"join"))}</button>
+  <h3>${esc(t("commMembers"))}</h3>${ms.map(p=>`<div class="row">${avatar(p.name,"sm")}<span class="grow"><b>${esc(p.company_name||p.name)}</b><br><span class="muted">${esc(p.title||"")} · ${esc(cityL(p.city))}</span></span>${p.id===state.uid?`<span class="chip ok">${esc(t("commYou"))}</span>`:`<button class="btn small ghost" data-act="chatWith" data-id="${p.id}">${esc(t("write2"))}</button>`}</div>`).join("")||`<span class="muted">${esc(t("none"))}</span>`}`);}
+ if(s.k==="newComm")return sheetWrap(t("commNew"),`<div class="field"><label for="cName">${esc(t("commName"))}</label><input id="cName" maxlength="60" autocomplete="off"></div>
+  <div class="field"><label for="cKind">${esc(t("commKind"))}</label><select id="cKind">${["school","city","trade","other"].map(k=>`<option value="${k}">${esc(t("k_"+k))}</option>`).join("")}</select></div>
+  <button class="btn block" data-act="saveComm">${esc(t("commCreate"))}</button>`);
+ if(s.k==="report")return sheetWrap(t(s.ty==="job"?"reportT":"reportCo"),`<p class="muted">${esc(t("reportSub"))}</p>${["scam","fake","discrimination","other"].map(k=>`<button class="card" style="text-align:start" data-act="doReport" data-r="${k}"><b>${esc(t("rp_"+k))}</b></button>`).join("")}`);
+ if(s.k==="verif")return sheetWrap(t("verT"),`<div class="note">${esc(t("verNote"))}</div><div class="field"><label for="vTax">${esc(t("verTax"))}</label><input id="vTax" maxlength="40" autocomplete="off"></div>
+  <div class="field"><label for="vSite">${esc(t("verSite"))}</label><input id="vSite" maxlength="120" value="${esc(state.me.company_site||"")}"></div>
+  <div class="field"><label for="vPhone">${esc(t("verPhone"))}</label><input id="vPhone" inputmode="tel" maxlength="30"></div>
+  <button class="btn block" data-act="sendVerif">${esc(t("verSend"))}</button>`);
+ return sheetOld(s);
+}
+
+function sheetOld(s){
+ if(s.k==="co"){const c=P(s.id);if(!c)return"";const js=state.jobs.filter(j=>j.owner===c.id);
+  return sheetWrap(c.company_name,`<div class="row">${avatar(c.company_name,"")}<div class="grow"><h3>${esc(c.company_name)} ${vfIf(c)}</h3><div class="muted">${esc(c.verified?t("verified"):t("unverified"))} · ${esc(sectL(c.sector))} · ${esc(cityL(c.city))}</div></div></div>
+  ${c.about?`<p style="white-space:pre-wrap">${esc(c.about)}</p>`:""}${c.company_site?`<div class="muted">${esc(t("site"))} : ${esc(c.company_site)}</div>`:""}
+  ${c.id!==state.uid?`<button class="btn block ghost" data-act="chatWith" data-id="${c.id}">${esc(t("msgCo"))}</button><button class="linkb" data-act="report" data-id="${c.id}" data-ty="profile">${esc(t("reportCo"))}</button>`:""}
+  <div><h3 style="margin-bottom:8px">${esc(t("openJobs"))} (${js.length})</h3><div style="display:flex;flex-direction:column;gap:8px">${js.map(j=>`<button class="card" style="text-align:start" data-act="openJob" data-id="${j.id}"><b>${esc(j.title)}</b><span class="muted">${esc(conL(j.contract))} · ${esc(cityL(j.city))}</span></button>`).join("")||`<span class="muted">${esc(t("none"))}</span>`}</div></div>`);}
+ if(s.k==="chat"){const p=P(s.id)||{name:"—"},ms=state.msgs.filter(m=>(m.sender===state.uid&&m.receiver===s.id)||(m.sender===s.id&&m.receiver===state.uid));
+  return sheetWrap(p.company_name||p.name,`<div class="chat" id="chatBox" style="min-height:220px;max-height:50vh">${ms.map(m=>`<div class="msg ${m.sender===state.uid?"me":""}">${esc(m.body)}</div>`).join("")}</div>
+  <div class="row"><input id="chatIn" maxlength="2000" placeholder="${esc(t("write"))}" aria-label="${esc(t("write"))}"><button class="btn" data-act="send" data-id="${s.id}">${esc(t("send"))}</button></div>`);}
+ if(s.k==="comments"){const cs=state.comments.filter(c=>c.post_id===s.id);
+  return sheetWrap(t("comment"),`${cs.map(c=>`<div class="card"><b>${esc((P(c.author)||{name:"—"}).name)}</b><span>${esc(c.body)}</span></div>`).join("")}<div class="row"><input id="cmIn" maxlength="1000" placeholder="${esc(t("commentPh"))}" aria-label="${esc(t("commentPh"))}"><button class="btn" data-act="addComment" data-id="${s.id}">${esc(t("send"))}</button></div>`);}
+ if(s.k==="post"){return sheetWrap(t("postT"),`<div class="row top">${avatar(state.me.name,"sm")}<b>${esc(state.me.name)}</b></div><textarea id="newPost" maxlength="2000" placeholder="${esc(t("shareWhat"))}" aria-label="${esc(t("postT"))}" style="min-height:140px"></textarea><button class="btn block" data-act="addPost" ${state.busy?"disabled":""}>${esc(t("postBtn"))}</button>${isRec()?`<div class="muted" style="text-align:center">${esc(t("orJob"))}</div><button class="btn rouge block" data-act="newJob">${ic("plus")} ${esc(t("publishJob"))}</button>`:""}`);}
+ if(s.k==="newJob"){
+  return sheetWrap(t("publishJob"),`<div class="field"><label for="nTitle">${esc(t("jobTitle"))}</label><input id="nTitle" maxlength="120"></div>
+  <div class="grid2"><div class="field"><label for="nCountry">${esc(t("country"))}</label><select id="nCountry">${countryOpts(state.me.country)}</select></div><div class="field"><label for="nCity">${esc(t("city"))}</label><input id="nCity" list="cityDl" value="${esc(state.me.city)}" autocomplete="off">${cityDl}</div>
+  <div class="field"><label for="nSect">${esc(t("sector"))}</label><select id="nSect">${Object.keys(SECT).map(k=>`<option value="${k}" ${state.me.sector===k?"selected":""}>${esc(sectL(k))}</option>`).join("")}</select></div>
+  <div class="field"><label for="nCon">${esc(t("contract"))}</label><select id="nCon">${CONTRACTS.map(k=>`<option value="${k}">${esc(conL(k))}</option>`).join("")}</select></div>
+  <div class="field"><label for="nMin">${esc(t("month"))} (min)</label><input id="nMin" inputmode="numeric"></div></div>
+  <div class="field"><label for="nMax">${esc(t("month"))} (max)</label><input id="nMax" inputmode="numeric"></div>
+  <label class="row"><input id="nRemote" type="checkbox" style="width:auto"> ${esc(t("remote"))}</label>
+  <div class="field"><label for="nDesc">${esc(t("desc"))}</label><textarea id="nDesc" maxlength="4000"></textarea></div>
+  <button class="btn block" data-act="saveJob" ${state.busy?"disabled":""}>${esc(t("pubBtn"))}</button>`);}
+ if(s.k==="edit"){const u=state.me;
+  return sheetWrap(t("edit"),`<div class="field"><label for="eName">${esc(t("name"))}</label><input id="eName" maxlength="80" value="${esc(u.name)}"></div>
+  <div class="field"><label for="eTitle">${esc(t("title"))}</label><input id="eTitle" maxlength="100" value="${esc(u.title)}"></div>
+  ${u.type==="recruiter"?`<div class="field"><label for="eCo">${esc(t("company"))}</label><input id="eCo" maxlength="80" value="${esc(u.company_name)}"></div><div class="field"><label for="eSite">${esc(t("site"))}</label><input id="eSite" maxlength="120" value="${esc(u.company_site)}"></div>`:""}
+  <div class="grid2"><div class="field"><label for="eCountry">${esc(t("country"))}</label><select id="eCountry">${countryOpts(u.country)}</select></div><div class="field"><label for="eCity">${esc(t("city"))}</label><input id="eCity" list="cityDl" value="${esc(u.city)}" autocomplete="off">${cityDl}</div>
+  <div class="field"><label for="eAvail">${esc(t("avail"))}</label><select id="eAvail">${["a1","a2","a3"].map(k=>`<option value="${k}" ${u.avail===k?"selected":""}>${esc(t(k))}</option>`).join("")}</select></div>
+  <div class="field"><label for="eGoal">${esc(t("goal"))}</label><select id="eGoal">${["g1","g2"].map(k=>`<option value="${k}" ${u.goal===k?"selected":""}>${esc(t(k))}</option>`).join("")}</select></div>
+  <div class="field"><label for="eSal">${esc(t("salary"))} (${esc(t("month"))})</label><input id="eSal" inputmode="numeric" value="${esc(u.salary==null?"":u.salary)}"></div></div>
+  <div class="field"><label for="eAbout">${esc(t("about"))}</label><textarea id="eAbout" maxlength="1500">${esc(u.about)}</textarea></div>
+  <div class="field"><label for="eSkills">${esc(t("skills"))} (${esc(t("skillsHelp"))})</label><input id="eSkills" value="${esc((u.skills||[]).join(", "))}"></div>
+  <div class="field"><label for="eExp">${esc(t("exp"))} (${esc(t("linesHelp"))})</label><textarea id="eExp" maxlength="3000">${esc(u.exp)}</textarea></div>
+  <div class="field"><label for="eEdu">${esc(t("edu"))} (${esc(t("linesHelp"))})</label><textarea id="eEdu" maxlength="3000">${esc(u.edu)}</textarea></div>
+  <button class="btn block" data-act="saveProfile" ${state.busy?"disabled":""}>${esc(t("save"))}</button>`);}
+ return"";
+}
+
+
+/* ---------- Rendu et actions ---------- */
+const app=document.getElementById("app");
+function render(focusId){
+ const root=document.documentElement;root.lang=state.lang;root.dir=state.lang==="ar"?"rtl":"ltr";
+ app.innerHTML=(!sb&&!DEMO)?setup():(!state.uid?authView():shell());
+ const cb=document.getElementById("chatBox");if(cb)cb.scrollTop=cb.scrollHeight;
+ if(focusId){const el=document.getElementById(focusId);if(el)el.focus()}
+}
+async function run(fn){if(state.busy)return;state.busy=true;try{await fn()}catch(e){const m=String(e&&e.message||"");const q=m.match(/quota_(apps|conn|jobs)/);if(q){state.sheet={k:"upgrade",why:q[1]};render()}else toast(errMsg(e))}state.busy=false}
+const chk=r=>{if(r.error)throw r.error;return r.data};
+async function act(a,d){
+ switch(a){
+ case"lang":state.lang=d.v;mcache.clear();state.authMsg="";try{localStorage.setItem(KEY,d.v)}catch(e){}render();break;
+ case"demo":await demoStart();break;
+ case"save":{const i=state.saved.indexOf(d.id);if(i>=0)state.saved.splice(i,1);else state.saved.push(d.id);try{localStorage.setItem("cp_saved",JSON.stringify(state.saved))}catch(e){}render();break}
+ case"tab":state.tab=d.v;render();break;
+ case"newPostSheet":state.sheet={k:"post"};render("newPost");break;
+ case"scope":state.scope=d.v;render();break;
+ case"upgrade":state.sheet={k:"upgrade",why:""};render();break;
+ case"activate":state.me.plan="pro";state.me.plan_until=null;state.sheet=null;mcache.clear();render();toast(t("isPro"));break;
+ case"pay":{const base=CFG.payUrl||(CFG.whatsapp?"https://wa.me/"+String(CFG.whatsapp).replace(/\D/g,"")+"?text="+encodeURIComponent("CarthagePro Pro - "+(state.me.name||"")):"");if(base)window.open(base,"_blank","noopener");else toast(t("errGeneric"));break}
+ case"doc":{const j=state.jobs.find(x=>x.id===d.id);if(!j)break;const had=state.docs.some(x=>x.job_id===d.id&&x.kind===d.kind);
+  if(!had){if(!gate("docs"))break;const row={job_id:d.id,kind:d.kind,created_at:new Date().toISOString()};state.docs.push(row);try{if(sb)await sb.from("doc_log").insert({user_id:state.uid,job_id:d.id,kind:d.kind})}catch(e){}}
+  state.sheet={k:"doc",id:d.id,kind:d.kind};render();break}
+ case"copyDoc":{const el=document.getElementById("docText");if(!el)break;const tx=el.innerText;let ok=false;try{await navigator.clipboard.writeText(tx);ok=true}catch(e){}
+  if(!ok){const r=document.createRange();r.selectNodeContents(el);const se=getSelection();se.removeAllRanges();se.addRange(r);try{ok=document.execCommand("copy")}catch(e){}}toast(ok?t("copied"):t("errGeneric"));break}
+ case"printDoc":window.print();break;
+ case"atype":state.aType=d.v;render();break;
+ case"authMode":state.authMode=state.authMode==="login"?"signup":"login";state.authMsg="";render();break;
+ case"auth":await doAuth();break;
+ case"logout":try{await sb.auth.signOut()}catch(e){}if(chan){try{sb.removeChannel(chan)}catch(e){}chan=null}Object.assign(state,{uid:null,me:null,profiles:[],jobs:[],apps:[],posts:[],likes:[],comments:[],conns:[],msgs:[],sheet:null,view:"feed",authMode:"login",authMsg:""});render();break;
+ case"view":state.view=d.v;state.sheet=null;render();{const m=document.getElementById("main");if(m)m.scrollTop=0}break;
+ case"close":state.sheet=(state.sheet&&state.sheet.k==="doc")?{k:"job",id:state.sheet.id}:null;render();break;
+ case"like":await run(async()=>{const has=state.likes.some(l=>l.post_id===d.id&&l.user_id===state.uid);
+  if(has){chk(await sb.from("post_likes").delete().eq("post_id",d.id).eq("user_id",state.uid));state.likes=state.likes.filter(l=>!(l.post_id===d.id&&l.user_id===state.uid))}
+  else{chk(await sb.from("post_likes").insert({post_id:d.id,user_id:state.uid}));state.likes.push({post_id:d.id,user_id:state.uid})}render()});break;
+ case"addPost":{const v=val("newPost").trim();if(!v)return;await run(async()=>{const r=chk(await sb.from("posts").insert({author:state.uid,body:v}).select().single());state.posts.unshift(r);state.sheet=null;render()});break}
+ case"openComments":state.sheet={k:"comments",id:d.id};render("cmIn");break;
+ case"addComment":{const v=val("cmIn").trim();if(!v)return;await run(async()=>{const r=chk(await sb.from("comments").insert({post_id:d.id,author:state.uid,body:v}).select().single());state.comments.push(r);render("cmIn")});break}
+ case"openJob":state.sheet={k:"job",id:d.id};render();
+  {const j=state.jobs.find(x=>x.id===d.id);if(j&&j.owner===state.uid){const nw=state.apps.filter(a=>a.job_id===j.id&&(a.status||"sent")==="sent");
+   if(nw.length){nw.forEach(a=>{a.status="seen";a.status_at=new Date().toISOString()});try{await sb.from("applications").update({status:"seen"}).eq("job_id",j.id).eq("status","sent")}catch(e){}render()}}}break;
+ case"setStatus":await run(async()=>{const a=state.apps.find(x=>x.id===d.id);if(!a)return;chk(await sb.from("applications").update({status:d.v}).eq("id",d.id));a.status=d.v;a.status_at=new Date().toISOString();
+   try{const r=await sb.rpc("recruiter_stats");if(r&&r.data){state.rstats={};r.data.forEach(x=>{state.rstats[x.owner]={total:Number(x.total),answered:Number(x.answered),avg_hours:x.avg_hours==null?null:Number(x.avg_hours)}})}}catch(e){}render();toast(t("saved"))});break;
+ case"openComm":state.sheet={k:"comm",id:d.id};render();break;
+ case"newComm":state.sheet={k:"newComm"};render("cName");break;
+ case"join":await run(async()=>{chk(await sb.from("community_members").insert({community_id:d.id,user_id:state.uid}));state.cmem.push({community_id:d.id,user_id:state.uid});render()});break;
+ case"leave":await run(async()=>{chk(await sb.from("community_members").delete().eq("community_id",d.id).eq("user_id",state.uid));state.cmem=state.cmem.filter(m=>!(m.community_id===d.id&&m.user_id===state.uid));render()});break;
+ case"mkCity":case"saveComm":{const city=a==="mkCity";const nm=city?(state.me.city||"").trim():val("cName").trim(),kd=city?"city":val("cKind");
+  if(nm.length<2){const e=document.getElementById("cName");if(e)e.focus();return}
+  const ex=state.comms.find(x=>x.kind===kd&&nrm(x.name)===nrm(nm));
+  await run(async()=>{let c=ex;if(!c){c=chk(await sb.from("communities").insert({name:nm,kind:kd,created_by:state.uid}).select().single());state.comms.push(c)}
+   if(!inComm(c.id)){chk(await sb.from("community_members").insert({community_id:c.id,user_id:state.uid}));state.cmem.push({community_id:c.id,user_id:state.uid})}
+   state.sheet={k:"comm",id:c.id};render();toast(t("commMade"))});break}
+ case"report":state.sheet={k:"report",id:d.id,ty:d.ty};render();break;
+ case"doReport":{const s0=state.sheet;await run(async()=>{chk(await sb.from("reports").insert({reporter:state.uid,target_type:s0.ty,target_id:s0.id,reason:d.r}));state.reps.push(s0.id);state.sheet=null;render();toast(t("reportDone"))});break}
+ case"verif":state.sheet={k:"verif"};render("vTax");break;
+ case"sendVerif":{const tx=val("vTax").trim();if(tx.length<4){document.getElementById("vTax").focus();return}
+  await run(async()=>{chk(await sb.from("verif_requests").insert({user_id:state.uid,tax_id:tx,site:val("vSite").trim()||null,phone:val("vPhone").trim()||null}));state.ver={user_id:state.uid};state.sheet=null;render();toast(t("verSent"))});break}
+ case"apply":if(!gate("apps"))break;await run(async()=>{const r=chk(await sb.from("applications").insert({job_id:d.id,applicant:state.uid}).select().single());state.apps.push(r);render()});break;
+ case"chatWith":case"openChat":if(d.id===state.uid)return;state.sheet={k:"chat",id:d.id};render("chatIn");break;
+ case"newJob":if(!gate("jobs"))break;state.sheet={k:"newJob"};render("nTitle");break;
+ case"saveJob":{const ti=val("nTitle").trim();if(ti.length<2){document.getElementById("nTitle").focus();return}
+  await run(async()=>{const r=chk(await sb.from("jobs").insert({owner:state.uid,title:ti,city:val("nCity").trim()||"Tunis",country:val("nCountry")||"TN",sector:val("nSect"),contract:val("nCon"),min_salary:parseInt(val("nMin"),10)||0,max_salary:parseInt(val("nMax"),10)||0,remote:!!(document.getElementById("nRemote")||{}).checked,descr:val("nDesc").trim()}).select().single());state.jobs.unshift(r);state.sheet=null;render()});break}
+ case"connect":if(!gate("conn"))break;await run(async()=>{const r=chk(await sb.from("connections").insert({requester:state.uid,addressee:d.id,status:"pending"}).select().single());state.conns.push(r);render()});break;
+ case"accept":await run(async()=>{chk(await sb.from("connections").update({status:"accepted"}).eq("id",d.id));const c=state.conns.find(x=>x.id===d.id);if(c)c.status="accepted";render()});break;
+ case"send":{const v=val("chatIn").trim();if(!v)return;await run(async()=>{const r=chk(await sb.from("messages").insert({sender:state.uid,receiver:d.id,body:v}).select().single());state.msgs.push(r);render("chatIn")});break}
+ case"openCo":state.sheet={k:"co",id:d.id};render();break;
+ case"editProfile":state.sheet={k:"edit"};render();break;
+ case"saveProfile":await run(async()=>{const u=state.me,sal=val("eSal").replace(/\D/g,"");
+  const upd={name:val("eName").trim()||u.name,title:val("eTitle").trim(),city:val("eCity").trim()||"Tunis",country:val("eCountry")||"TN",avail:val("eAvail"),goal:val("eGoal"),salary:sal?parseInt(sal,10):null,about:val("eAbout").trim(),skills:val("eSkills").split(",").map(s=>s.trim()).filter(Boolean).slice(0,30),exp:val("eExp"),edu:val("eEdu")};
+  if(u.type==="recruiter"){upd.company_name=val("eCo").trim();upd.company_site=val("eSite").trim()}
+  chk(await sb.from("profiles").update(upd).eq("id",state.uid));Object.assign(u,upd);const i=state.profiles.findIndex(p=>p.id===state.uid);if(i>=0)state.profiles[i]=u;state.sheet=null;render();toast(t("saved"))});break;
+ }
+}
+async function doAuth(){
+ const su=state.authMode==="signup",email=val("aMail").trim(),pass=val("aPass");
+ const fail=m=>{state.authMsg=m;render()};
+ if(!/^\S+@\S+\.\S+$/.test(email))return fail(t("errEmail"));
+ if(pass.length<8)return fail(t("errPass"));
+ let meta;
+ if(su){const name=val("aName").trim();if(!name)return fail(t("errName"));
+  meta={name,type:state.aType,city:val("aCity").trim()||"Tunis",country:val("aCountry")||"TN"};
+  if(state.aType==="recruiter"){const co=val("aCo").trim();if(!co)return fail(t("errCompany"));meta.company_name=co;meta.sector=val("aSect")||"it"}}
+ state.busy=true;state.authMsg="";
+ try{
+  let r;
+  if(su){r=await sb.auth.signUp({email,password:pass,options:{data:meta}});if(r.error)throw r.error;
+   if(!r.data.session){state.busy=false;state.authMode="login";return fail(t("checkMail"))}}
+  else{r=await sb.auth.signInWithPassword({email,password:pass});if(r.error)throw r.error}
+  state.uid=r.data.session.user.id;state.email=r.data.session.user.email||"";state.busy=false;state.view="feed";await loadAll();
+ }catch(e){state.busy=false;fail(errMsg(e))}
+}
+app.addEventListener("click",e=>{
+ if(e.target.classList&&e.target.classList.contains("scrim")){state.sheet=null;render();return}
+ const el=e.target.closest("[data-act]");if(!el||el.disabled)return;
+ act(el.dataset.act,el.dataset);
+});
+app.addEventListener("input",e=>{
+ if(e.target.id==="q"){state.q=e.target.value;document.getElementById("jobsList").innerHTML=jobCards()}
+ else if(e.target.id==="pq"){state.pq=e.target.value;document.getElementById("peopleList").innerHTML=peopleCards()}
+});
+app.addEventListener("change",e=>{
+ if(e.target.id==="langSel"){act("lang",{v:e.target.value});return}
+ if(e.target.dataset&&e.target.dataset.sel==="status"){act("setStatus",{id:e.target.dataset.id,v:e.target.value});return}
+ const m={fCity:"fCity",fSect:"fSect",fCon:"fCon"};
+ if(m[e.target.id]){state[m[e.target.id]]=e.target.value;document.getElementById("jobsList").innerHTML=jobCards()}
+});
+app.addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&e.target.id==="chatIn"&&state.sheet)act("send",{id:state.sheet.id});
+ if(e.key==="Enter"&&e.target.id==="cmIn"&&state.sheet)act("addComment",{id:state.sheet.id});
+ if(e.key==="Enter"&&(e.target.id==="aPass"||e.target.id==="aMail"))act("auth",{});
+ if(e.key==="Escape"&&state.sheet){state.sheet=null;render()}
+});
+if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+boot();
+
+</script>
+</body>
+</html>
