@@ -785,7 +785,7 @@ function sheet(){
   ${planCard(t("planFree"),"0","",["f_free1","f_free2","f_free3","f_free4"],false)}
   ${planCard(rec?t("planRec"):t("planPro"),money(rec?"rec":"pro"),t("perMonth"),rec?["f_rec1","f_pro1","f_pro4"]:["f_pro1","f_pro2","f_pro3","f_pro4"],true)}
   ${rec?"":`<div class="muted" style="text-align:center">${esc(money("year"))} ${esc(t("perYear"))}</div>`}
-  <button class="btn rouge block" data-act="${DEMO?"activate":"pay"}">${esc(DEMO?t("demoActivate"):t("payBtn"))}</button><div class="muted" style="text-align:center">${esc(t("payNote"))}</div>`);}
+  <button class="btn rouge block" data-act="${DEMO?"activate":"pay"}" data-plan="${rec?"rec":"pro"}">${esc(DEMO?t("demoActivate"):t("payBtn"))}</button><div class="muted" style="text-align:center">${esc(t("payNote"))}</div>`);}
  if(s.k==="doc"){const j=state.jobs.find(x=>x.id===s.id);if(!j)return"";const txt=s.kind==="cv"?cvText(j):letterText(j),m=mm(j);
   return sheetWrap(t(s.kind==="cv"?"genCV":"genLetter"),`<div class="muted">${esc(j.title)} — ${esc(coName(j))}</div><div class="note">${esc(t("docsNote"))}</div>
   <div class="doc" id="docText" contenteditable="true" dir="auto" role="textbox" aria-multiline="true">${esc(txt)}</div>
@@ -875,7 +875,7 @@ async function act(a,d){
  case"scope":state.scope=d.v;render();break;
  case"upgrade":state.sheet={k:"upgrade",why:""};render();break;
  case"activate":state.me.plan="pro";state.me.plan_until=null;state.sheet=null;mcache.clear();render();toast(t("isPro"));break;
- case"pay":{const base=CFG.payUrl||(CFG.whatsapp?"https://wa.me/"+String(CFG.whatsapp).replace(/\D/g,"")+"?text="+encodeURIComponent("CarthagePro Pro - "+(state.me.name||"")):"");if(base)window.open(base,"_blank","noopener");else toast(t("errGeneric"));break}
+ case"pay":{const base=CFG.payUrl||(CFG.whatsapp?"https://wa.me/"+String(CFG.whatsapp).replace(/\D/g,"")+"?text="+encodeURIComponent("Bonjour, je souhaite activer l'offre CarthagePro "+(d&&d.plan==="rec"?"Recruteur":"Pro")+".\nNom : "+(state.me.name||"")+"\nE-mail : "+(state.email||"")+"\nIdentifiant : "+(state.uid||"")):"");if(base)window.open(base,"_blank","noopener");else toast(t("errGeneric"));break}
  case"doc":{const j=state.jobs.find(x=>x.id===d.id);if(!j)break;const had=state.docs.some(x=>x.job_id===d.id&&x.kind===d.kind);
   if(!had){if(!gate("docs"))break;const row={job_id:d.id,kind:d.kind,created_at:new Date().toISOString()};state.docs.push(row);try{if(sb)await sb.from("doc_log").insert({user_id:state.uid,job_id:d.id,kind:d.kind})}catch(e){}}
   state.sheet={k:"doc",id:d.id,kind:d.kind};render();break}
